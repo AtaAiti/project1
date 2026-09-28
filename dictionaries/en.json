@@ -1,0 +1,7 @@
+{
+  "nav": { "home": "Home", "about": "About", "menu": "Menu", "afisha": "Events", "contacts": "Contacts", "styleguide": "Styleguide" },
+  "tagline": "A meeting place between the lines",
+  "hero": { "eyebrow": "Bar · club · conversations", "title": "Read slowly.\nLive loudly.", "text": "Literator is where a good story begins beyond the page.", "cta": "Explore the room" },
+  "placeholder": { "eyebrow": "Coming soon", "text": "This chapter is still being written. We are building it with the care of a good library." },
+  "styleguide": { "eyebrow": "Week 02 / design system", "title": "The visual language\nof Literator", "text": "A dark stage for living stories: warm paper, theatrical wine and typography with a point of view.", "palette": "Palette", "type": "Typography", "buttons": "Buttons" }
+}

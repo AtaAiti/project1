@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { getDictionary } from "@/lib/dictionaries";
+
+export default async function Home({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params; const t = getDictionary(locale); const title = t.hero.title.split("\n");
+  return <main><section className="grain relative flex min-h-[calc(100vh-91px)] items-end overflow-hidden px-6 pb-16 pt-20 md:px-16 md:pb-24"><div className="absolute right-[-8vw] top-[8vh] h-[70vw] w-[70vw] max-w-[800px] rounded-full border border-[var(--line)] opacity-60"/><div className="absolute right-[11vw] top-[20vh] h-[38vw] w-[38vw] max-w-[480px] rounded-full bg-[var(--wine)]/20 blur-3xl"/><div className="relative max-w-4xl"><p className="mb-7 text-[10px] uppercase tracking-[0.3em] text-[var(--wine-bright)]">{t.hero.eyebrow}</p><h1 className="display max-w-3xl text-6xl leading-[.9] tracking-[-.055em] md:text-9xl">{title.map((line) => <span className="block" key={line}>{line}</span>)}</h1><p className="mt-8 max-w-md text-sm leading-7 text-[var(--muted)]">{t.hero.text}</p><Link href={`/${locale}/about`} className="mt-10 inline-flex items-center gap-5 border border-[var(--ink)] px-5 py-4 text-[10px] uppercase tracking-[0.2em] transition hover:bg-[var(--ink)] hover:text-[var(--paper)]">{t.hero.cta}<span aria-hidden>↗</span></Link></div><div className="absolute bottom-7 right-7 hidden text-[10px] uppercase tracking-[0.2em] text-[var(--muted)] md:block">01 / 05</div></section></main>;
+}
