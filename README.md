@@ -21,6 +21,15 @@ npm run dev
 
 Откройте `http://localhost:3000/ru` или `http://localhost:3000/en`.
 
+## Supabase
+
+1. Создайте проект Supabase и скопируйте `.env.example` в `.env.local`.
+2. Заполните URL, publishable key и service role key.
+3. Выполните `supabase/schema.sql` в SQL Editor Supabase.
+4. Создайте администратора в Supabase Auth с email/password.
+
+После этого `/admin/*` будет защищён middleware, а `/admin/menu` и `/admin/events` будут сохранять изменения в базе. Без переменных Supabase приложение запускается с demo-данными, а бронирование проходит проверку без записи в БД.
+
 ## Деплой
 
 Репозиторий можно импортировать в GitHub и Vercel. Для Vercel достаточно выбрать корень проекта и стандартную команду сборки Next.js.
