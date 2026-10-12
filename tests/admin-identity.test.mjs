@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test, afterEach } from "vitest";
 import { isAdminUser } from "../src/lib/admin-identity.ts";
 
 const originalUserId = process.env.ADMIN_USER_ID;
 const originalEmail = process.env.ADMIN_EMAIL;
 
-test.afterEach(() => {
+afterEach(() => {
   if (originalUserId === undefined) delete process.env.ADMIN_USER_ID;
   else process.env.ADMIN_USER_ID = originalUserId;
   if (originalEmail === undefined) delete process.env.ADMIN_EMAIL;

@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createHash } from "node:crypto";
 
 export type RateLimitResult = { allowed: boolean };
 
@@ -30,6 +31,12 @@ export function createRateLimiter(limit = 5, windowSeconds = 10 * 60): RateLimit
   return new SupabaseRpcRateLimiter(limit, windowSeconds);
 }
 
-export function rateLimit(key: string, backend: RateLimiter = createRateLimiter()) {
+export function rateLimit(key: string, limit = 5, windowSeconds = 600, backend: RateLimiter = createRateLimiter(limit, windowSeconds)) {
   return backend.check(key);
+}
+
+export function rateLimitKey(request: Request, route: string) {
+  // Vercel overwrites x-forwarded-for. Other deployments must use a trusted proxy.
+  const address = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  return `${route}:${createHash("sha256").update(address).digest("hex")}`;
 }

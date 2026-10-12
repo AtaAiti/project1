@@ -1,69 +1,65 @@
 import { NextResponse } from "next/server";
-import { hasAdminIdentityConfig, isAdminUser } from "@/lib/admin-identity";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { adminResourceSchema, resourceSchemas, adminPatchSchema, adminDeleteSchema, adminListQuerySchema } from "@/lib/schemas";
+import { authorizeAdmin } from "@/lib/server/admin";
+import { apiError } from "@/lib/server/api-error";
 
-const resources = new Set(["menu_items", "events", "gallery_photos", "reviews"]);
-async function authorized() {
-  if (!hasAdminIdentityConfig()) {
-    console.error("[admin] Access denied: neither ADMIN_USER_ID nor ADMIN_EMAIL is configured.");
-    return { status: 403 as const };
-  }
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("[admin] Access denied: Supabase credentials are not configured.");
-    return { status: 403 as const };
-  }
+type Context = { params: Promise<{ resource: string }> };
 
-  const authClient = await createClient();
-  const { data: { user } } = await authClient.auth.getUser();
-  if (!user) return { status: 401 as const };
-  if (!isAdminUser(user)) return { status: 403 as const };
-
-  return { status: 200 as const, supabase: createAdminClient() };
-}
-
-function validResource(resource: string) {
-  return resources.has(resource);
-}
-
-function denied(status: 401 | 403) {
-  return NextResponse.json({ error: status === 401 ? "Unauthorized" : "Forbidden" }, { status });
-}
-
-export async function GET(_request: Request, context: { params: Promise<{ resource: string }> }) {
+async function contextFor(context: Context) {
   const { resource } = await context.params;
-  if (!validResource(resource)) return NextResponse.json({ error: "Unknown resource" }, { status: 404 });
-  const auth = await authorized();
-  if (auth.status !== 200) return denied(auth.status);
-  const { data, error } = await auth.supabase.from(resource).select("*").order("created_at", { ascending: false });
-  return NextResponse.json({ data, error: error?.message }, { status: error ? 400 : 200 });
+  const parsed = adminResourceSchema.safeParse(resource);
+  if (!parsed.success) return { ok: false, response: apiError("error.notFound", 404) } as const;
+  const auth = await authorizeAdmin();
+  if (auth.status !== 200) return { ok: false, response: apiError(auth.status === 401 ? "error.unauthorized" : "error.forbidden", auth.status) } as const;
+  return { ok: true, resource: parsed.data, supabase: auth.supabase } as const;
 }
 
-export async function POST(request: Request, context: { params: Promise<{ resource: string }> }) {
-  const { resource } = await context.params;
-  if (!validResource(resource)) return NextResponse.json({ error: "Unknown resource" }, { status: 404 });
-  const auth = await authorized();
-  if (auth.status !== 200) return denied(auth.status);
-  const { data, error } = await auth.supabase.from(resource).insert(await request.json()).select().single();
-  return NextResponse.json({ data, error: error?.message }, { status: error ? 400 : 200 });
+export async function GET(request: Request, context: Context) {
+  const ctx = await contextFor(context);
+  if (!ctx.ok) return ctx.response;
+  const params = new URL(request.url).searchParams;
+  const input = Object.fromEntries(params);
+  if ([...params.keys()].some((key) => params.getAll(key).length !== 1)) return apiError("validation.invalid", 400);
+  const parsed = adminListQuerySchema.safeParse(input);
+  if (!parsed.success || (parsed.data.event_id && ctx.resource !== "event_rsvps")) return apiError("validation.invalid", 400);
+  try {
+    let query = ctx.supabase.from(ctx.resource).select("*").order("created_at", { ascending: false });
+    if (parsed.data.event_id) query = query.eq("event_id", parsed.data.event_id);
+    const { data, error } = await query;
+    if (error) { console.error("[admin] Read failed."); return apiError("error.generic", 503); }
+    return NextResponse.json({ data });
+  } catch { return apiError("error.generic", 503); }
 }
 
-export async function PATCH(request: Request, context: { params: Promise<{ resource: string }> }) {
-  const { resource } = await context.params;
-  if (!validResource(resource)) return NextResponse.json({ error: "Unknown resource" }, { status: 404 });
-  const auth = await authorized();
-  if (auth.status !== 200) return denied(auth.status);
-  const { id, ...values } = await request.json();
-  const { data, error } = await auth.supabase.from(resource).update(values).eq("id", id).select().single();
-  return NextResponse.json({ data, error: error?.message }, { status: error ? 400 : 200 });
+async function write(request: Request, context: Context, method: "POST" | "PATCH" | "DELETE") {
+  const ctx = await contextFor(context);
+  if (!ctx.ok) return ctx.response;
+  // RSVP insertions must use the capacity RPC in PR 2, never generic CRUD.
+  if (ctx.resource === "event_rsvps" && method !== "DELETE") return apiError("error.methodNotAllowed", 405);
+  let input: unknown;
+  try { input = await request.json(); } catch { return apiError("validation.invalid", 400); }
+  const schema = method === "DELETE" ? adminDeleteSchema : method === "PATCH" ? adminPatchSchema(ctx.resource) : resourceSchemas[ctx.resource];
+  const parsed = schema.safeParse(input);
+  if (!parsed.success) return apiError("validation.invalid", 400);
+  try {
+    if (method === "DELETE") {
+      const { id } = adminDeleteSchema.parse(parsed.data);
+      const { error } = await ctx.supabase.from(ctx.resource).delete().eq("id", id);
+      if (error) { console.error("[admin] Delete failed."); return apiError("error.generic", 503); }
+      return NextResponse.json({ ok: true });
+    }
+    if (method === "PATCH") {
+      const { id, ...values } = parsed.data as Record<string, unknown>;
+      const { data, error } = await ctx.supabase.from(ctx.resource).update(values).eq("id", id).select().single();
+      if (error) { console.error("[admin] Update failed."); return apiError("error.generic", 503); }
+      return NextResponse.json({ data });
+    }
+    const { data, error } = await ctx.supabase.from(ctx.resource).insert(parsed.data as Record<string, unknown>).select().single();
+    if (error) { console.error("[admin] Insert failed."); return apiError("error.generic", 503); }
+    return NextResponse.json({ data });
+  } catch { return apiError("error.generic", 503); }
 }
 
-export async function DELETE(request: Request, context: { params: Promise<{ resource: string }> }) {
-  const { resource } = await context.params;
-  if (!validResource(resource)) return NextResponse.json({ error: "Unknown resource" }, { status: 404 });
-  const auth = await authorized();
-  if (auth.status !== 200) return denied(auth.status);
-  const { id } = await request.json();
-  const { error } = await auth.supabase.from(resource).delete().eq("id", id);
-  return NextResponse.json({ ok: !error, error: error?.message }, { status: error ? 400 : 200 });
-}
+export async function POST(request: Request, context: Context) { return write(request, context, "POST"); }
+export async function PATCH(request: Request, context: Context) { return write(request, context, "PATCH"); }
+export async function DELETE(request: Request, context: Context) { return write(request, context, "DELETE"); }
