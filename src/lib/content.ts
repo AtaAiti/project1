@@ -1,19 +1,68 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import {
+  demoMenu,
+  demoEvents,
+  demoGallery,
+  demoReviews,
+  stockImage,
+} from "@/lib/demo-content";
+export {
+  demoMenu,
+  demoEvents,
+  demoGallery,
+  demoReviews,
+} from "@/lib/demo-content";
 
-export const demoMenu = [
-  { id: "demo-1", category: "Коктейли", name_ru: "Гэтсби", name_en: "Gatsby", composition_ru: "Золотой джин, шампанское, лаванда", composition_en: "Golden gin, champagne, lavender", strength: "12%", price: 890, is_hit: true },
-  { id: "demo-2", category: "Коктейли", name_ru: "Анна Каренина", name_en: "Anna Karenina", composition_ru: "Бурбон, клюква, гранат", composition_en: "Bourbon, cranberry, pomegranate", strength: "15%", price: 950, is_hit: false },
-  { id: "demo-3", category: "Безалкогольные", name_ru: "Безмолвная глава", name_en: "The Silent Chapter", composition_ru: "Чай, ягоды, сироп", composition_en: "Tea, berries, syrup", strength: "0%", price: 620, is_hit: false },
-];
-export const demoEvents = [{ id: "demo-event-1", date: "2026-10-02", time: "21:00", title_ru: "Виниловый джаз: Blue Note", title_en: "Vinyl Jazz: Blue Note", description_ru: "Тёплое звучание пластинок и авторские коктейли.", description_en: "Warm vinyl sound and signature cocktails.", status: "published", image_url: "" }];
-export const demoGallery = [{ id: "demo-photo-1", image_url: "", caption_ru: "Весенний салон", caption_en: "Spring salon" }];
-export const demoReviews = [{ id: "demo-review-1", author: "Марина Л.", rating: 5, text_ru: "Очень камерное место. Вечер получился особенным.", text_en: "A wonderfully intimate place. The evening was special.", status: "published" }];
+export type MenuItem = (typeof demoMenu)[number] & { created_at?: string };
+export type EventItem = (typeof demoEvents)[number] & { created_at?: string };
+export type GalleryPhoto = (typeof demoGallery)[number] & {
+  created_at?: string;
+};
+export type Review = (typeof demoReviews)[number] & { created_at?: string };
+
+export const hasContentBackend = () =>
+  Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  );
 
 async function query<T>(table: string, fallback: T[]): Promise<T[]> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return fallback;
-  try { const supabase = await createClient(); const { data, error } = await supabase.from(table).select("*").order("created_at", { ascending: false }); return error || !data?.length ? fallback : (data as T[]); } catch { return fallback; }
+  if (!hasContentBackend()) return fallback;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from(table)
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error("Public content is temporarily unavailable.");
+  // An empty live table remains empty: deleted content must not reappear as demo data.
+  return (data ?? []) as T[];
 }
-export const getMenu = () => query("menu_items", demoMenu);
-export const getEvents = () => query("events", demoEvents);
-export const getGallery = () => query("gallery_photos", demoGallery);
-export const getReviews = () => query("reviews", demoReviews);
+export const getMenu = cache(() => query<MenuItem>("menu_items", demoMenu));
+export const getEvents = cache(() => query<EventItem>("events", demoEvents));
+export const getGallery = cache(() =>
+  query<GalleryPhoto>("gallery_photos", demoGallery),
+);
+export const getReviews = cache(() => query<Review>("reviews", demoReviews));
+
+export function menuImage(item: MenuItem) {
+  if (item.category === "Десерты") return stockImage("dessert");
+  if (item.category === "Горячее") return stockImage("pasta");
+  if (item.category === "Закуски") return stockImage("salad");
+  if (["Кофе", "Чай", "Безалкогольные"].includes(item.category))
+    return stockImage("coffee");
+  return stockImage("cocktails");
+}
+
+export function eventStartsAt(event: Pick<EventItem, "date" | "time">) {
+  return new Date(
+    `${event.date}T${event.time.length === 5 ? event.time + ":00" : event.time}+06:00`,
+  ).getTime();
+}
+export function sortUpcoming(events: EventItem[], now = Date.now()) {
+  return events
+    .filter(
+      (event) => event.status === "published" && eventStartsAt(event) >= now,
+    )
+    .sort((a, b) => eventStartsAt(a) - eventStartsAt(b));
+}

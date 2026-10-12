@@ -1,9 +1,45 @@
-"use client";
-import { useEffect, useState } from "react";
+import { ResourceEditor } from "@/components/admin/resource-editor";
 import { getDictionary } from "@/lib/dictionaries";
-import { adminEditorPayload } from "@/lib/schemas";
-const dictionary = getDictionary("ru");
-const t = dictionary.admin;
-type EventItem = { id: string; date: string; time: string; title_ru: string; title_en: string; description_ru: string; description_en: string; status: string; image_url: string };
-const empty: EventItem = { id: "", date: "", time: "19:30", title_ru: "", title_en: "", description_ru: "", description_en: "", status: "draft", image_url: "" };
-export default function AdminEventsPage() { const [events, setEvents] = useState<EventItem[]>([]); const [editing, setEditing] = useState<EventItem | null>(null); const [error, setError] = useState(""); useEffect(() => { fetch("/api/admin/events").then((r) => r.json()).then((result) => { if (result.data) setEvents(result.data); else setError(result.error || dictionary.errors["error.generic"]); }).catch(() => setError(dictionary.errors["error.generic"])); }, []); const save = async () => { if (!editing) return; const response = await fetch("/api/admin/events", { method: editing.id ? "PATCH" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(adminEditorPayload("events", editing)) }); const result = await response.json(); if (!response.ok) { setError(result.error || dictionary.errors["error.generic"]); return; } setEvents((list) => editing.id ? list.map((item) => item.id === editing.id ? result.data : item) : [result.data, ...list]); setEditing(null); }; const remove = async (id: string) => { const response = await fetch("/api/admin/events", { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ id }) }); if (!response.ok) { setError(dictionary.errors["error.generic"]); return; } setEvents((list) => list.filter((item) => item.id !== id)); }; return <div><header className="flex items-center justify-between border-b border-[var(--border)] bg-neutral-900 px-6 py-6"><div><h1 className="display text-3xl">{t.events}</h1><p className="text-xs text-[var(--text-muted)]">{events.length} {t.eventCount} · Supabase</p></div><button onClick={() => setEditing({ ...empty })} className="btn-gold">{t.addEvent}</button></header><main className="p-6 md:p-8">{error && <p className="mb-4 text-sm text-[var(--error)]">{error}</p>}<div className="card overflow-hidden"><table className="w-full text-left text-sm"><thead className="bg-[var(--bg-elevated)] text-[10px] uppercase text-[var(--text-muted)]"><tr><th className="px-5 py-3">{t.date}</th><th className="px-5 py-3">{t.title}</th><th className="px-5 py-3">{t.status}</th><th className="px-5 py-3">{t.actions}</th></tr></thead><tbody>{events.map((event) => <tr className="border-t border-[var(--border)]" key={event.id}><td className="px-5 py-4 text-xs text-[var(--text-secondary)]">{event.date} · {event.time}</td><td className="px-5 py-4"><span className="display text-lg">{event.title_ru}</span><small className="block text-xs text-[var(--text-muted)]">{event.title_en}</small></td><td className="px-5"><span className="rounded-full bg-[var(--gold)]/15 px-2.5 py-1 text-[10px] text-[var(--gold)]">{event.status}</span></td><td className="px-5"><button onClick={() => setEditing(event)} className="mr-3 text-xs text-[var(--gold)]">{t.edit}</button><button onClick={() => remove(event.id)} className="text-xs text-[var(--error)]">{t.delete}</button></td></tr>)}</tbody></table></div></main>{editing && <div className="fixed inset-0 z-40 bg-black/70"><aside className="absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-neutral-900 p-6"><div className="flex justify-between"><h2 className="display text-3xl">{t.event}</h2><button onClick={() => setEditing(null)} aria-label={t.close}>×</button></div><div className="mt-7 grid gap-4">{([["date",t.date],["time",t.time],["title_ru",t.titleRu],["title_en",t.titleEn],["description_ru",t.descriptionRu],["description_en",t.descriptionEn]] as const).map(([field, label]) => <label key={field} className="text-xs text-[var(--text-secondary)]">{label}<input className="input-field mt-1.5" value={editing[field]} onChange={(event) => setEditing({ ...editing, [field]: event.target.value })}/></label>)}<label className="text-xs text-[var(--text-secondary)]">{t.status}<select className="input-field mt-1.5" value={editing.status} onChange={(event) => setEditing({ ...editing, status: event.target.value })}><option value="draft">{t.draft}</option><option value="published">{t.published}</option><option value="moderation">{t.moderation}</option></select></label><button onClick={save} className="btn-gold">{t.save}</button></div></aside></div>}</div>; }
+export default function EventsPage() {
+  const { admin: t, adminExtra: x } = getDictionary("ru");
+  return (
+    <ResourceEditor
+      resource="events"
+      title={t.events}
+      addLabel={t.addEvent}
+      titleField="title_ru"
+      detailField="description_ru"
+      imageField="image_url"
+      search
+      defaults={{
+        date: "",
+        time: "19:00",
+        title_ru: "",
+        title_en: "",
+        description_ru: "",
+        description_en: "",
+        image_url: "",
+        status: "draft",
+      }}
+      fields={[
+        { key: "date", label: t.date, type: "date", required: true },
+        { key: "time", label: t.time, type: "time", required: true },
+        { key: "title_ru", label: t.titleRu, required: true },
+        { key: "title_en", label: t.titleEn, required: true },
+        { key: "description_ru", label: t.descriptionRu, type: "textarea" },
+        { key: "description_en", label: t.descriptionEn, type: "textarea" },
+        { key: "image_url", label: x.imageUrl, type: "url" },
+        {
+          key: "status",
+          label: t.status,
+          type: "select",
+          options: [
+            { value: "draft", label: t.draft },
+            { value: "published", label: t.published },
+            { value: "moderation", label: t.moderation },
+          ],
+        },
+      ]}
+    />
+  );
+}

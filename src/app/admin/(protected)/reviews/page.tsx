@@ -1,5 +1,44 @@
-"use client";
-import { useState } from "react";
-type Review = { id: number; author: string; date: string; rating: number; text: string; status: string };
-const seed: Review[] = [{ id: 1, author: "Марина Л.", date: "18 сентября 2026", rating: 5, text: "Очень камерное место. «Гэтсби» и разговор о Фицджеральде сделали вечер особенным.", status: "ОПУБЛИКОВАН" }, { id: 2, author: "Илья С.", date: "12 сентября 2026", rating: 5, text: "Редкая библиотека, внимательная команда и лучший джазовый четверг в городе.", status: "ОПУБЛИКОВАН" }, { id: 3, author: "Дарья К.", date: "05 сентября 2026", rating: 4, text: "Красивый зал и продуманная карта. Вернёмся на книжный клуб.", status: "НА МОДЕРАЦИИ" }];
-export default function ReviewsAdmin() { const [reviews, setReviews] = useState(seed); const [filter, setFilter] = useState("ВСЕ"); const filtered = filter === "ВСЕ" ? reviews : reviews.filter((review) => review.status === filter); return <div><header className="border-b border-[var(--border)] bg-neutral-900 px-6 py-6 md:px-8"><h1 className="display text-2xl">Отзывы</h1><p className="text-xs text-[var(--text-muted)]">{reviews.length} отзывов · средняя оценка 4.7</p></header><main className="p-6 md:p-8"><div className="mb-5 flex gap-2">{["ВСЕ", "ОПУБЛИКОВАН", "НА МОДЕРАЦИИ"].map((value) => <button key={value} onClick={() => setFilter(value)} className={`rounded-full px-3 py-2 text-[10px] ${filter === value ? "bg-[var(--gold)] text-black" : "border border-[var(--border)] text-[var(--text-secondary)]"}`}>{value}</button>)}</div><div className="space-y-3">{filtered.map((review) => <article className="card p-5" key={review.id}><div className="flex justify-between gap-4"><div><div className="flex flex-wrap items-center gap-3"><strong className="text-sm">{review.author}</strong><span className="text-[var(--gold)]">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span><span className="rounded-full bg-[var(--gold)]/15 px-2 py-1 text-[10px] text-[var(--gold)]">{review.status}</span></div><p className="mt-1 text-xs text-[var(--text-muted)]">{review.date}</p><p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{review.text}</p></div><button onClick={() => setReviews((list) => list.filter((item) => item.id !== review.id))} className="text-xs text-[var(--error)]">Удалить</button></div></article>)}</div></main></div>; }
+import { ResourceEditor } from "@/components/admin/resource-editor";
+import { getDictionary } from "@/lib/dictionaries";
+export default function ReviewsPage() {
+  const { admin: t, adminExtra: x } = getDictionary("ru");
+  return (
+    <ResourceEditor
+      resource="reviews"
+      title={t.reviews}
+      addLabel={x.addReview}
+      titleField="author"
+      detailField="text_ru"
+      search
+      defaults={{
+        author: "",
+        rating: 5,
+        text_ru: "",
+        text_en: "",
+        status: "moderation",
+      }}
+      fields={[
+        { key: "author", label: x.author, required: true },
+        {
+          key: "rating",
+          label: x.rating,
+          type: "number",
+          min: 1,
+          max: 5,
+          required: true,
+        },
+        { key: "text_ru", label: x.textRu, type: "textarea", required: true },
+        { key: "text_en", label: x.textEn, type: "textarea" },
+        {
+          key: "status",
+          label: t.status,
+          type: "select",
+          options: [
+            { value: "moderation", label: t.moderation },
+            { value: "published", label: t.published },
+          ],
+        },
+      ]}
+    />
+  );
+}
