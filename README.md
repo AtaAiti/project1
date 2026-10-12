@@ -24,11 +24,33 @@ npm run dev
 ## Supabase
 
 1. Создайте проект Supabase и скопируйте `.env.example` в `.env.local`.
-2. Заполните URL, publishable key и service role key.
-3. Выполните `supabase/schema.sql` в SQL Editor Supabase.
-4. Создайте администратора в Supabase Auth с email/password.
+2. Заполните переменные из таблицы ниже.
+3. Выполните `supabase/schema.sql` в SQL Editor Supabase. Скрипт создаёт таблицы и атомарную RPC-функцию rate limiting, удаляющую истёкшие окна при записи.
+4. Создайте администратора в Supabase Auth с email/password и укажите его UUID в `ADMIN_USER_ID`.
 
-После этого `/admin/*` будет защищён middleware, а `/admin/menu` и `/admin/events` будут сохранять изменения в базе. Без переменных Supabase приложение запускается с demo-данными, а бронирование проходит проверку без записи в БД.
+После этого `/admin/*` будет защищён middleware, а административный API будет выполнять операции через service role только после проверки личности пользователя. Если `ADMIN_USER_ID` указан, он является единственной проверкой; `ADMIN_EMAIL` используется как резервная проверка только при пустом `ADMIN_USER_ID`. Если обе переменные отсутствуют, административный доступ закрыт.
+
+Публичный контент без Supabase отображает demo-данные. Отправка бронирования без серверных переменных Supabase закрыта и возвращает общую ошибку, чтобы rate limiting нельзя было случайно обойти.
+
+| Переменная | Назначение |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL проекта Supabase |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Публичный ключ Supabase для Auth и чтения контента |
+| `SUPABASE_SERVICE_ROLE_KEY` | Серверный ключ для бронирований, rate limiting и административного CRUD |
+| `ADMIN_USER_ID` | UUID единственного администратора; основная проверка |
+| `ADMIN_EMAIL` | Email администратора без учёта регистра; используется только если UUID не задан |
+| `TELEGRAM_BOT_TOKEN` | Токен Telegram-бота для уведомлений о брони |
+| `TELEGRAM_CHAT_ID` | ID чата или канала для уведомлений |
+
+`check_rate_limit` доступна на выполнение только роли `service_role`. Роли `anon` и `authenticated` не могут вызывать RPC напрямую. Записи с истёкшим сроком удаляются атомарной функцией при следующей проверке лимита; отдельный `pg_cron` не требуется.
+
+## Проверки
+
+```bash
+npm test
+npm run lint
+npm run build
+```
 
 ## Деплой
 
