@@ -3,7 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { apiError } from "@/lib/server/api-error";
 
 export async function POST(request: Request) {
-  if (request.headers.get("origin") !== new URL(request.url).origin) {
+  const url = new URL(request.url);
+  const host = request.headers.get("host") || url.host;
+  const protocol = request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1);
+  // Next may use an internal hostname in request.url behind its server/proxy.
+  if (request.headers.get("origin") !== `${protocol}://${host}`) {
     return apiError("error.forbidden", 403);
   }
   try {

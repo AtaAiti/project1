@@ -21,4 +21,10 @@ describe("logout", () => {
     expect(response.status).toBe(503);
     expect((await response.json()).errorKey).toBe("error.generic");
   });
+  it("uses the public host behind the Next/Vercel proxy", async () => {
+    signOut.mockResolvedValue({ error: null });
+    const response = await POST(new Request("http://localhost:3000/api/auth/logout", { method: "POST", headers: { origin: "https://site.example", host: "site.example", "x-forwarded-proto": "https" } }));
+    expect(response.status).toBe(200);
+    expect(signOut).toHaveBeenCalledOnce();
+  });
 });
