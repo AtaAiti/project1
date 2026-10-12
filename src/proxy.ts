@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { hasAdminIdentityConfig, isAdminUser } from "@/lib/admin-identity";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   if (["/admin/login", "/admin/reset-password"].includes(request.nextUrl.pathname)) return response;
   if (!hasAdminIdentityConfig()) {
