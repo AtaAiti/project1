@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { RecoveryRedirect } from "@/components/recovery-redirect";
 
 export const metadata: Metadata = {
   title: "ЛитераторЪ | Место встречи между строк",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body><RecoveryRedirect />{children}</body>
     </html>
   );
 }

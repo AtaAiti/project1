@@ -4,7 +4,7 @@ import { hasAdminIdentityConfig, isAdminUser } from "@/lib/admin-identity";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
-  if (request.nextUrl.pathname === "/admin/login") return response;
+  if (["/admin/login", "/admin/reset-password"].includes(request.nextUrl.pathname)) return response;
   if (!hasAdminIdentityConfig()) {
     console.error("[admin] Access denied: neither ADMIN_USER_ID nor ADMIN_EMAIL is configured.");
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

@@ -46,6 +46,12 @@ npm run dev
 
 ## Проверки
 
+### Вход и установка пароля администратора
+
+Вход доступен по `/admin/login`. Для первой установки пароля введите email и нажмите «Задать или восстановить пароль». Откройте письмо в том же браузере, задайте новый пароль и войдите.
+
+В Supabase → Authentication → URL Configuration задайте Site URL `https://literator-xi.vercel.app` и добавьте Redirect URL `https://literator-xi.vercel.app/admin/reset-password`. Для локальной разработки добавьте `http://localhost:3000/admin/reset-password`. Страница восстановления поддерживает PKCE-код и recovery-токены из письма Supabase Dashboard. Истёкшую ссылку замените новым письмом через страницу входа.
+
 ```bash
 npm test
 npm run lint
