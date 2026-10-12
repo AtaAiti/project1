@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import test from "node:test";
+import { test } from "vitest";
 import { BOOKING_ERROR_KEYS } from "../src/lib/booking-errors.ts";
 
 async function readDictionary(locale) {

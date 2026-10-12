@@ -1,5 +1,8 @@
 "use client";
 
+import { getDictionary } from "@/lib/dictionaries";
+const t = getDictionary("ru").auth;
+
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useRef, useState } from "react";
@@ -51,25 +54,25 @@ export default function ResetPasswordPage() {
     void initialization.current.then((valid) => {
       if (!active) return;
       if (valid) setReady(true);
-      else setError("Ссылка недействительна или истекла. Запросите новое письмо на странице входа.");
+      else setError(t.invalidLink);
     });
     return () => { active = false; };
   }, []);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (password.length < 8) { setError("Пароль должен содержать минимум 8 символов."); return; }
-    if (password !== confirmation) { setError("Пароли не совпадают."); return; }
+    if (password.length < 8) { setError(t.passwordShort); return; }
+    if (password !== confirmation) { setError(t.passwordMismatch); return; }
     setLoading(true); setError("");
     try {
       const client = recoveryClient();
       const { error } = await client.auth.updateUser({ password });
-      if (error) { setError("Не удалось сохранить пароль. Проверьте требования к паролю или запросите новую ссылку."); return; }
+      if (error) { setError(t.saveError); return; }
       await client.auth.signOut();
       setSaved(true);
-    } catch { setError("Не удалось подключиться. Попробуйте позже."); }
+    } catch { setError(t.connectionError); }
     finally { setLoading(false); }
   }
 
-  return <main className="grid min-h-screen place-items-center px-6"><section className="card w-full max-w-md p-8"><h1 className="display text-3xl">{saved ? "Пароль сохранён" : "Новый пароль"}</h1>{saved ? <p className="mt-4 text-sm">Теперь войдите с вашим email и новым паролем.</p> : ready ? <form onSubmit={submit} className="mt-6 grid gap-4"><label className="text-sm">Новый пароль<input className="input-field mt-2" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} /></label><label className="text-sm">Повторите пароль<input className="input-field mt-2" type="password" autoComplete="new-password" minLength={8} required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} /></label><button disabled={loading} className="btn-gold">{loading ? "Сохраняем..." : "Сохранить пароль"}</button></form> : !error && <p className="mt-4 text-sm">Проверяем ссылку...</p>}{error && <p role="alert" className="mt-4 text-sm text-[var(--error)]">{error}</p>}<Link href="/admin/login" className="mt-6 inline-block text-sm text-[var(--gold)] underline">Перейти ко входу</Link></section></main>;
+  return <main className="grid min-h-screen place-items-center px-6"><section className="card w-full max-w-md p-8"><h1 className="display text-3xl">{saved ? t.saved : t.newPassword}</h1>{saved ? <p className="mt-4 text-sm">{t.savedText}</p> : ready ? <form onSubmit={submit} className="mt-6 grid gap-4"><label className="text-sm">{t.newPassword}<input className="input-field mt-2" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} /></label><label className="text-sm">{t.confirmPassword}<input className="input-field mt-2" type="password" autoComplete="new-password" minLength={8} required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} /></label><button disabled={loading} className="btn-gold">{loading ? t.saving : t.save}</button></form> : !error && <p className="mt-4 text-sm">{t.checking}</p>}{error && <p role="alert" className="mt-4 text-sm text-[var(--error)]">{error}</p>}<Link href="/admin/login" className="mt-6 inline-block text-sm text-[var(--gold)] underline">{t.loginLink}</Link></section></main>;
 }

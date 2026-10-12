@@ -1,4 +1,6 @@
 import type { BookingErrorKey } from "@/lib/booking-errors";
+import { isBookingErrorKey } from "@/lib/booking-errors";
+import { bookingSchema } from "@/lib/schemas";
 
 export type BookingPayload = {
   name: string;
@@ -7,6 +9,7 @@ export type BookingPayload = {
   time: string;
   guests: number;
   comment: string;
+  website?: string;
 };
 
 type ValidationResult =
@@ -14,20 +17,9 @@ type ValidationResult =
   | { data?: never; errorKey: BookingErrorKey };
 
 export function validateBookingInput(input: unknown): ValidationResult {
-  if (!input || typeof input !== "object") return { errorKey: "validation.required" };
-
-  const values = input as Record<string, unknown>;
-  const name = String(values.name ?? "").trim();
-  const phone = String(values.phone ?? "").trim();
-  const date = String(values.date ?? "").trim();
-  const time = String(values.time ?? "").trim();
-  const guestsText = String(values.guests ?? "").trim();
-  const guests = Number(guestsText);
-  const comment = String(values.comment ?? "").trim();
-
-  if (!name || !phone || !date || !time || !guestsText) return { errorKey: "validation.required" };
-  if (phone.replace(/\D/g, "").length < 11) return { errorKey: "validation.phone" };
-  if (!Number.isInteger(guests) || guests < 1 || guests > 20) return { errorKey: "validation.guests" };
-
-  return { data: { name, phone, date, time, guests, comment } };
+  const result = bookingSchema.safeParse(input);
+  if (result.success) return { data: result.data };
+  const issue = result.error.issues[0];
+  if (issue.path[0] === "guests") return { errorKey: "validation.guests" };
+  return { errorKey: isBookingErrorKey(issue.message) ? issue.message : "validation.invalid" };
 }

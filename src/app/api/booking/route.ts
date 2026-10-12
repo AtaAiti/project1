@@ -1,20 +1,16 @@
 import { NextResponse } from "next/server";
-import { createHash } from "node:crypto";
 import type { BookingErrorKey } from "@/lib/booking-errors";
 import { validateBookingInput } from "@/lib/booking-validation";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyHoneypot } from "@/lib/honeypot";
+import { sendTelegram } from "@/lib/server/telegram";
+import { getDictionary } from "@/lib/dictionaries";
 
 export const runtime = "nodejs";
 
 function errorResponse(errorKey: BookingErrorKey, status: number) {
   return NextResponse.json({ errorKey }, { status });
-}
-
-function getRateLimitKey(request: Request) {
-  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const clientAddress = request.headers.get("x-real-ip")?.trim() || forwardedFor || "unknown";
-  return `booking:${createHash("sha256").update(clientAddress).digest("hex")}`;
 }
 
 export async function POST(request: Request) {
@@ -25,6 +21,7 @@ export async function POST(request: Request) {
     return errorResponse("validation.required", 400);
   }
 
+  if (!verifyHoneypot(body)) return NextResponse.json({ ok: true });
   const validation = validateBookingInput(body);
   if (validation.errorKey) return errorResponse(validation.errorKey, 400);
 
@@ -34,27 +31,21 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { allowed } = await rateLimit(getRateLimitKey(request));
+    const { allowed } = await rateLimit(rateLimitKey(request, "booking"), 5, 600);
     if (!allowed) return errorResponse("error.rateLimited", 429);
 
     const { name, phone, date, time, guests, comment } = validation.data;
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("bookings")
-      .insert({ name, phone, date, time, guests, comment })
+      .insert({ name, phone, date, time, guests, comment, status: "pending" })
       .select("id")
       .single();
 
     if (error) throw new Error(`Booking insert failed: ${error.message}`);
 
-    if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
-      const telegramResponse = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text: `Новая бронь ${data.id}\n${name}, ${phone}\n${date} ${time}, гостей: ${guests}\n${comment}` }),
-      });
-      if (!telegramResponse.ok) throw new Error(`Telegram request failed with status ${telegramResponse.status}.`);
-    }
+    const notification = getDictionary("ru").telegram;
+    await sendTelegram(`${notification.newBooking} ${data.id}\n${name}, ${phone}\n${date} ${time} (${notification.timeZone}), ${notification.guests}: ${guests}\n${comment}`);
 
     return NextResponse.json({ ok: true, id: data.id });
   } catch (error) {

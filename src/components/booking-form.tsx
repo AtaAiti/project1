@@ -1,12 +1,14 @@
 "use client";
-import { useState } from "react";
+
+import { useId, useState } from "react";
 import { isBookingErrorKey, type BookingErrorKey } from "@/lib/booking-errors";
 import { validateBookingInput } from "@/lib/booking-validation";
-import { getDictionary, type Locale } from "@/lib/dictionaries";
+import { getDictionary } from "@/lib/dictionaries";
 
-export function BookingForm({ locale }: { locale: string }) {
-  const resolvedLocale: Locale = locale === "en" ? "en" : "ru";
-  const dictionary = getDictionary(resolvedLocale);
+export function BookingForm({ locale, onSuccess, expanded = false }: { locale: string; onSuccess?: () => void; expanded?: boolean }) {
+  const dictionary = getDictionary(locale);
+  const t = dictionary.booking;
+  const id = useId();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorKey, setErrorKey] = useState<BookingErrorKey | null>(null);
@@ -16,22 +18,31 @@ export function BookingForm({ locale }: { locale: string }) {
     const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
     const validation = validateBookingInput(payload);
     if (validation.errorKey) { setErrorKey(validation.errorKey); return; }
-
     setLoading(true);
     setErrorKey(null);
     try {
       const response = await fetch("/api/booking", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(validation.data) });
       const result: { errorKey?: unknown } = await response.json();
       if (!response.ok) { setErrorKey(isBookingErrorKey(result.errorKey) ? result.errorKey : "error.generic"); return; }
-      setSent(true);
-    } catch {
-      setErrorKey("error.generic");
-    } finally {
-      setLoading(false);
-    }
+      if (onSuccess) onSuccess();
+      else setSent(true);
+    } catch { setErrorKey("error.generic"); }
+    finally { setLoading(false); }
   }
 
-  if (sent) return <div className="card p-8"><p className="section-label">Telegram</p><h2 className="display mt-4 text-3xl">{resolvedLocale === "ru" ? "Заявка отправлена" : "Request sent"}</h2></div>;
+  if (sent) return <div role="status" className="card p-8"><h2 className="display text-3xl">{t.successTitle}</h2><p className="mt-4">{t.successText}</p></div>;
 
-  return <form noValidate onSubmit={submit} className="card grid gap-4 p-6"><input required name="name" placeholder="Имя / Name" className="input-field"/><input required name="phone" type="tel" placeholder="Телефон / Phone" className="input-field"/><div className="grid gap-4 sm:grid-cols-2"><input required name="date" type="date" className="input-field"/><input required name="time" type="time" className="input-field"/></div><input required name="guests" type="number" min="1" max="20" placeholder="Гостей / Guests" className="input-field"/><textarea name="comment" rows={3} placeholder="Комментарий / Comment" className="input-field resize-none"/>{errorKey && <p className="text-sm text-[var(--error)]">{dictionary.errors[errorKey]}</p>}<button disabled={loading} className="btn-gold">{loading ? (resolvedLocale === "ru" ? "ОТПРАВЛЯЕМ..." : "SENDING...") : (resolvedLocale === "ru" ? "ОТПРАВИТЬ ЗАЯВКУ" : "SEND REQUEST")}</button></form>;
+  const labelClass = "text-sm text-[var(--text-primary)]";
+  const wide = expanded ? "md:col-span-2" : "";
+  return <form noValidate onSubmit={submit} aria-describedby={errorKey ? id + "-error" : undefined} className={`card relative grid gap-5 p-6 ${expanded ? "md:grid-cols-2 md:p-10" : ""}`}>
+    <label className={labelClass} htmlFor={id + "-name"}>{t.name}<input id={id + "-name"} name="name" autoComplete="name" maxLength={200} required className="input-field mt-2" placeholder={t.namePlaceholder} /></label>
+    <label className={labelClass} htmlFor={id + "-phone"}>{t.phone}<input id={id + "-phone"} name="phone" autoComplete="tel" inputMode="tel" required type="tel" className="input-field mt-2" placeholder={t.phonePlaceholder} /></label>
+    <label className={labelClass} htmlFor={id + "-date"}>{t.date}<input id={id + "-date"} name="date" required type="date" className="input-field mt-2" /></label>
+    <label className={labelClass} htmlFor={id + "-time"}>{t.time}<input id={id + "-time"} name="time" required type="time" defaultValue="19:30" className="input-field mt-2" /></label>
+    <label className={labelClass + " " + wide} htmlFor={id + "-guests"}>{t.guests}<input id={id + "-guests"} name="guests" required type="number" min="1" max="20" className="input-field mt-2" placeholder={t.guestsPlaceholder} /></label>
+    <label className={labelClass + " " + wide} htmlFor={id + "-comment"}>{t.comment}<textarea id={id + "-comment"} name="comment" rows={3} maxLength={5000} className="input-field mt-2 resize-none" placeholder={t.commentPlaceholder} /></label>
+    <div aria-hidden="true" className="absolute -left-[10000px]"><label htmlFor={id + "-website"}>{t.honeypot}</label><input id={id + "-website"} name="website" tabIndex={-1} autoComplete="off" /></div>
+    {errorKey && <p id={id + "-error"} role="alert" className={"text-sm text-[var(--text-primary)] " + wide}>{dictionary.errors[errorKey]}</p>}
+    <button disabled={loading} className={"btn-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--gold)] " + wide}>{loading ? t.sending : t.submit}</button>
+  </form>;
 }
