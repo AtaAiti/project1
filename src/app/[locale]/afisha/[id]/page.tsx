@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/feedback-link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getEvent, eventStartsAt, hasContentBackend } from "@/lib/content";

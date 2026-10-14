@@ -5,7 +5,6 @@ import {
   demoEvents,
   demoGallery,
   demoReviews,
-  stockImage,
 } from "@/lib/demo-content";
 export {
   demoMenu,
@@ -70,14 +69,7 @@ export const getGallery = cache(() =>
 );
 export const getReviews = cache(() => query<Review>("reviews", demoReviews));
 
-export function menuImage(item: MenuItem) {
-  if (item.category === "Десерты") return stockImage("dessert");
-  if (item.category === "Горячее") return stockImage("pasta");
-  if (item.category === "Закуски") return stockImage("salad");
-  if (["Кофе", "Чай", "Безалкогольные"].includes(item.category))
-    return stockImage("coffee");
-  return stockImage("cocktails");
-}
+export { menuImage } from "@/lib/menu-presentation";
 
 export function eventStartsAt(event: Pick<EventItem, "date" | "time">) {
   return new Date(

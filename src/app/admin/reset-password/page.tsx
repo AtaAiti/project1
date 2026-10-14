@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
         if (code) {
           const { error } = await client.auth.exchangeCodeForSession(code);
           if (error) throw error;
-        } else if (accessToken && refreshToken && hash.get("type") === "recovery") {
+        } else if (accessToken && refreshToken && ["recovery","invite"].includes(hash.get("type") || "")) {
           const { error } = await client.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
           if (error) throw error;
         }

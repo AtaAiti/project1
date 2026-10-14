@@ -6,6 +6,7 @@ import { ContentImage } from "@/components/content-image";
 import { isDemoRecord } from "@/lib/demo-content";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoadingCards } from "@/components/loading-cards";
 
 type Row = Record<string, string | number | boolean | null> & { id: string };
 type Field = {
@@ -189,7 +190,7 @@ export function ResourceEditor({
           </label>
         )}
         {loading ? (
-          <p role="status">{t.loading}</p>
+          <LoadingCards label={t.loading} />
         ) : !shown.length ? (
           <p className="card p-8">{t.empty}</p>
         ) : (
