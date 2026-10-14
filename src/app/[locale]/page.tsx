@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventBadges } from "@/components/event-badges";
 import { getDictionary } from "@/lib/dictionaries";
 import {
   getMenu,
@@ -94,14 +95,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
                   <h3 className="display mt-4 text-2xl">
                     {en ? event.title_en : event.title_ru}
                   </h3>
+                  <EventBadges event={event} locale={locale}/>
                   <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
                     {en ? event.description_en : event.description_ru}
                   </p>
                   <Link
-                    href={`/${locale}/afisha`}
+                    href={`/${locale}/afisha/${event.id}`}
                     className="mt-6 inline-block text-sm text-[var(--gold)]"
                   >
-                    {t.allEvents} →
+                    {d.rsvp.details} →
                   </Link>
                 </div>
               </article>

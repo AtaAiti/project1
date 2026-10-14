@@ -1,0 +1,77 @@
+# Event RSVP with capacity
+
+Посетитель открывает событие из афиши или главной и записывает 1–6 гостей. Раньше карточка предлагала только бронь стола; теперь RSVP относится к конкретному событию и показывает оставшиеся места. PostgreSQL блокирует строку события перед подсчётом и вставкой, поэтому два одновременных запроса не могут занять последнее место.
+
+## Реализация
+
+- `/{locale}/afisha/[id]`: описание, фото, дата/время Asia/Bishkek, переведённые metadata/Open Graph, счётчик, форма, состояния sold out/past/404.
+- `/api/rsvp`: строгий Zod, нормализация кыргызских номеров, honeypot без записи/Telegram, Supabase rate limit 5/600 секунд, только capacity RPC, локализованные errorKey и безопасное уведомление Telegram после записи.
+- Карточки: ссылки на событие, свободные места/«мест нет», бейдж книжного клуба.
+- Кабинет: nullable capacity, is_club_meeting, список участников, удаление и пересчёт мест. При наличии гостей перенос даты/времени запрещён; уменьшение вместимости ниже занятого количества также запрещено. Ошибки объясняют причину.
+- Fallback без Supabase: пять сценариев — обычное, почти заполненное, заполненное, без лимита и прошедшее. Симуляция явно обозначена и не отправляет POST; данные сбрасываются при перезагрузке.
+
+## SQL и переменные окружения
+
+Миграция: `supabase/migrations/20261014000100_0003_event_rsvp.sql`. Она добавляет поля events, event_rsvps с FK/cascade и уникальным телефоном в рамках события, RLS, безопасный агрегат event_seats, атомарный create_event_rsvp и trigger защиты изменений. Справочный `supabase/schema.sql` обновлён.
+
+Миграция применена владельцем к настроенному Supabase и проверена через API. Повторное применение сохраняет записи. Новых env нет: используются текущие Supabase, ADMIN_USER_ID/ADMIN_EMAIL и Telegram.
+
+В текущей архитектуре проверка единственного администратора выполняется сервером по env. SELECT/DELETE RSVP доступны только его серверному service_role клиенту; браузерные anon/authenticated не получают данные. RPC доступна только service_role, прямой INSERT/UPDATE RSVP отозван даже у service_role. Это сохраняет единый путь вставки. Агрегат раскрывает только ID опубликованного события и сумму гостей.
+
+## Проверки
+
+- Vitest: 117 тестов проходят; lint без предупреждений и production build успешны. Покрыты схемы, маршруты, переводы каждого RSVP errorKey, honeypot, ошибки RPC, успешная запись при недоступном уведомлении, SQL constraints/privileges/guards.
+- `node scripts/test-rsvp-concurrency.mjs`: два независимых соединения PostgreSQL 17, первый запрос удерживает event lock до commit, второй получает sold_out. Контейнер удаляется.
+- `node scripts/check-rsvp-live.mjs`: реальная гонка последнего места в Supabase, duplicate, not_enough_seats, sold_out, unlimited, past, draft, запрет прямой вставки и публичного чтения, защита изменения события, освобождение места после удаления. Временные события удаляются каскадно; Telegram не отправляется.
+- Браузер на production-сборке с настоящим Supabase: RU/EN, нормализация телефона, счётчик, duplicate/group errors, sold-out/past/404, шестая отправка 429, сообщения о запрещённых изменениях, список/удаление участника, второй пользователь 403. Временные события и Auth-пользователи очищены.
+- Отдельная сборка без Supabase: все пять демо-сценариев, duplicate/group errors и отсутствие любых POST проверены браузером.
+- Мобильный Lighthouse для страницы события на локальной production-сборке с живым Supabase: performance 86, accessibility 100. Это измерение текущей облачной среды; не измерение Vercel.
+
+Разработческий seed: `node scripts/seed-rsvp-dev.mjs` показывает план без записи. Для отдельного dev Supabase: `node scripts/seed-rsvp-dev.mjs --apply --development`. Скрипт не запускается автоматически, не работает в NODE_ENV=production и сохраняет существующие записи. Не запускайте его на production-проекте. Данные заполнения создаются только через RSVP RPC.
+
+## Ручная проверка
+
+1. Опубликовать событие на будущее с capacity=3; открыть RU и EN страницу и проверить metadata, фото и бейджи.
+2. Записать 2 гостей с `0700123456`; получить успех, нормализованный номер в кабинете и 2/3 занятых места.
+3. Повторить номер в формате `+996700123456`: duplicate. Попробовать 2 других гостей: not_enough_seats. Записать одного: sold_out, форма исчезает.
+4. Проверить гостей 0, 7 и дробное число, неверный номер, пустое имя и неизвестное поле API: 400 с переведённым ключом.
+5. Проверить capacity=null: счётчик скрыт. Прошедшее событие: без формы. Неизвестный/неопубликованный ID: 404.
+6. POST с непустым website: имитация успеха, без записи и Telegram. Шесть валидных POST с одного IP за 10 минут: шестой 429.
+7. В кабинете попытаться перенести событие с участниками и уменьшить вместимость ниже занятых мест: объясняющая ошибка. Удалить RSVP и убедиться, что места освободились.
+8. Проверить Telegram на одном настоящем согласованном RSVP: название события, имя, номер, гости и места. Автоматические live-тесты отключают Telegram, чтобы не рассылать тестовые заявки.
+9. Запустить сборку без Supabase и проверить обозначенную симуляцию всех пяти сценариев без сетевых POST.
+
+Webhook/inline-кнопки Telegram, Book of the Month, ICS и остальные следующие PR не начаты. После этого PR работа останавливается для согласования.
+
+## Изменённые файлы
+
+- `README.md`
+- `dictionaries/en.json`
+- `dictionaries/ru.json`
+- `docs/pr2-review.md`
+- `scripts/check-rsvp-live.mjs`
+- `scripts/seed-rsvp-dev.mjs`
+- `scripts/test-rsvp-concurrency.mjs`
+- `src/app/[locale]/[section]/page.tsx`
+- `src/app/[locale]/afisha/[id]/not-found.tsx`
+- `src/app/[locale]/afisha/[id]/page.tsx`
+- `src/app/[locale]/page.tsx`
+- `src/app/admin/(protected)/events/[id]/page.tsx`
+- `src/app/admin/(protected)/events/page.tsx`
+- `src/app/api/admin/[resource]/route.ts`
+- `src/app/api/rsvp/route.ts`
+- `src/components/admin/event-rsvps.tsx`
+- `src/components/admin/resource-editor.tsx`
+- `src/components/event-badges.tsx`
+- `src/components/rsvp-form.tsx`
+- `src/lib/content.ts`
+- `src/lib/demo-content.ts`
+- `src/lib/rsvp-errors.ts`
+- `src/lib/schemas.ts`
+- `supabase/migrations/20261014000100_0003_event_rsvp.sql`
+- `supabase/schema.sql`
+- `tests/content.test.ts`
+- `tests/rsvp-migration.test.ts`
+- `tests/rsvp-route.test.ts`
+
+Функциональных уточняющих вопросов нет.

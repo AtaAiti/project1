@@ -34,7 +34,7 @@ it("sorts future events by Bishkek local time and excludes drafts/past events", 
   expect(eventStartsAt(demoEvents[0])).toBe(Date.parse("2026-11-07T13:00:00Z"));
   expect(
     sortUpcoming([...demoEvents].reverse(), now).map((row) => row.id),
-  ).toEqual([demoId(101), demoId(102), demoId(103)]);
+  ).toEqual([demoId(101), demoId(102), demoId(103),demoId(105)]);
   expect(sortUpcoming([{ ...demoEvents[0], status: "draft" }], now)).toEqual(
     [],
   );

@@ -51,7 +51,11 @@ async function write(request: Request, context: Context, method: "POST" | "PATCH
     if (method === "PATCH") {
       const { id, ...values } = parsed.data as Record<string, unknown>;
       const { data, error } = await ctx.supabase.from(ctx.resource).update(values).eq("id", id).select().single();
-      if (error) { console.error("[admin] Update failed."); return apiError("error.generic", 503); }
+      if (error) {
+        if (error.message === "event_schedule_locked") return apiError("rsvp.scheduleLocked", 409);
+        if (error.message === "capacity_below_taken") return apiError("rsvp.capacityBelowTaken", 409);
+        console.error("[admin] Update failed."); return apiError("error.generic", 503);
+      }
       return NextResponse.json({ data });
     }
     const { data, error } = await ctx.supabase.from(ctx.resource).insert(parsed.data as Record<string, unknown>).select().single();
