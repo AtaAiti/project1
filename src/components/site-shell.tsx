@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "@/components/feedback-link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/dictionaries";
@@ -14,9 +15,18 @@ export function Logo({ locale, tagline }: { locale: Locale; tagline: string }) {
   return (
     <Link
       href={`/${locale}`}
-      className="display text-xl font-bold tracking-wide"
+      className="block shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--gold)]"
     >
-      ЛИТЕРАТОРЪ<span className="sr-only"> {tagline}</span>
+      <Image
+        src="/brand/literator-gold.png"
+        alt="ЛитераторЪ"
+        width={1679}
+        height={937}
+        sizes="144px"
+        className="h-20 w-36 object-contain"
+        loading="eager"
+      />
+      <span className="sr-only"> {tagline}</span>
     </Link>
   );
 }
@@ -71,7 +81,7 @@ export function SiteShell({
   };
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <header className="sticky top-0 z-30 flex min-h-20 items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 px-6 py-4 backdrop-blur md:px-12">
+      <header className="sticky top-0 z-30 flex min-h-24 items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 px-6 py-2 backdrop-blur md:px-12">
         <Logo locale={locale} tagline={dictionary.tagline} />
         <nav
           className="hidden items-center gap-5 lg:flex"
