@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/feedback-link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { getDictionary } from "@/lib/dictionaries";
@@ -19,8 +19,10 @@ const items = [
 
 export default function AdminShell({
   children,
+  canManageTeam = false,
 }: {
   children: React.ReactNode;
+  canManageTeam?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -42,12 +44,20 @@ export default function AdminShell({
   }
   const navigation = (
     <nav className="flex gap-2 overflow-x-auto md:flex-col">
-      {items.map(([href, label]) => (
+      {(canManageTeam
+        ? [...items, ["/admin/team", d.team.title] as const]
+        : items
+      ).map(([href, label]) => (
         <Link
           key={href}
           href={href}
-          aria-current={pathname === href ? "page" : undefined}
-          className={`whitespace-nowrap rounded px-3 py-3 text-sm ${pathname === href ? "bg-[var(--gold)]/20 text-[var(--gold)]" : "text-[var(--text-primary)]"}`}
+          aria-current={
+            pathname === href ||
+            (href !== "/admin" && pathname.startsWith(href + "/"))
+              ? "page"
+              : undefined
+          }
+          className={`whitespace-nowrap rounded px-3 py-3 text-sm ${pathname === href || (href !== "/admin" && pathname.startsWith(href + "/")) ? "bg-[var(--gold)]/20 text-[var(--gold)]" : "text-[var(--text-primary)]"}`}
         >
           {label}
         </Link>
@@ -56,7 +66,7 @@ export default function AdminShell({
   );
   return (
     <div className="min-h-screen">
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-[var(--border)] bg-zinc-950 p-5 md:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-[var(--border)] bg-[var(--bg-secondary)] p-5 md:flex">
         <Link href="/admin" className="display mb-8 text-2xl">
           ЛИТЕРАТОРЪ
         </Link>
@@ -79,7 +89,7 @@ export default function AdminShell({
           )}
         </div>
       </aside>
-      <div className="md:hidden border-b border-[var(--border)] bg-zinc-950 p-4">
+      <div className="md:hidden border-b border-[var(--border)] bg-[var(--bg-secondary)] p-4">
         <div className="mb-4 flex items-center justify-between gap-3">
           <Link href="/ru" className="text-sm text-[var(--gold)]">
             {x.visitorSite}

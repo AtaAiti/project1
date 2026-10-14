@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/feedback-link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/dictionaries";
 import { PublicFooter } from "@/components/public-footer";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 type Dictionary = ReturnType<typeof import("@/lib/dictionaries").getDictionary>;
 const navigation = ["about", "afisha", "menu", "contacts"] as const;
@@ -30,6 +31,7 @@ export function SiteShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const activeSection = pathname.split("/")[2] || "";
   const [menuOpen, setMenuOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
@@ -69,14 +71,19 @@ export function SiteShell({
   };
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <header className="sticky top-0 z-30 flex min-h-20 items-center justify-between gap-4 border-b border-[var(--border)] bg-neutral-950/95 px-6 py-4 backdrop-blur md:px-12">
+      <header className="sticky top-0 z-30 flex min-h-20 items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 px-6 py-4 backdrop-blur md:px-12">
         <Logo locale={locale} tagline={dictionary.tagline} />
         <nav
           className="hidden items-center gap-5 lg:flex"
           aria-label={t.navigation}
         >
           {links.map(([href, label]) => (
-            <Link key={href} href={`/${locale}/${href}`} className="text-sm">
+            <Link
+              key={href}
+              href={`/${locale}/${href}`}
+              aria-current={activeSection === href ? "page" : undefined}
+              className={`px-1 py-3 text-sm ${activeSection === href ? "nav-current" : "hover:text-[var(--gold)]"}`}
+            >
               {label}
             </Link>
           ))}
@@ -107,13 +114,14 @@ export function SiteShell({
           ☰
         </button>
       </header>
+      <Breadcrumbs locale={locale} />
       {children}
       <PublicFooter locale={locale} />
       <div
         ref={menu}
         id="visitor-menu"
         inert={!menuOpen}
-        className={`fixed inset-0 z-40 flex flex-col justify-between overflow-y-auto bg-zinc-950 px-6 py-7 transition-transform lg:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-0 z-40 flex flex-col justify-between overflow-y-auto bg-[var(--bg-primary)] px-6 py-7 transition-transform lg:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div>
           <div className="flex items-center justify-between">
@@ -135,7 +143,8 @@ export function SiteShell({
                 key={href}
                 href={`/${locale}/${href}`}
                 onClick={() => setMenuOpen(false)}
-                className="block border-b border-[var(--border)] py-4 font-serif text-2xl"
+                aria-current={activeSection === href ? "page" : undefined}
+                className={`block border-b border-[var(--border)] py-4 font-serif text-2xl ${activeSection === href ? "nav-current" : ""}`}
               >
                 {label}
               </Link>
@@ -166,7 +175,7 @@ export function SiteShell({
       </div>
       {gateOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/90 p-4">
-          <div className="w-full max-w-xs rounded-lg border border-[var(--border)] bg-neutral-900 px-6 pb-7 pt-10 text-center">
+          <div className="w-full max-w-xs rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-6 pb-7 pt-10 text-center">
             <p className="display text-3xl font-bold">ЛИТЕРАТОРЪ</p>
             <p className="mt-3 text-[10px] uppercase tracking-[.2em] text-[var(--gold)]">
               Место встречи между строк

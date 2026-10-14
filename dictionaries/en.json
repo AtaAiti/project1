@@ -46,7 +46,11 @@
     "rsvp.notEnoughSeats": "There are not enough seats for your group. Reduce the number of guests.",
     "rsvp.duplicate": "This phone number is already registered for this event.",
     "rsvp.scheduleLocked": "Date and time cannot change while guests are registered. Cancel registrations and agree on rescheduling first.",
-    "rsvp.capacityBelowTaken": "Capacity cannot be lower than the number of registered guests."
+    "rsvp.capacityBelowTaken": "Capacity cannot be lower than the number of registered guests.",
+    "error.emailRateLimited": "Too many email requests. Please wait and try again later.",
+    "error.emailDelivery": "The email could not be sent. Try again later or contact the site owner.",
+    "validation.email": "Enter a valid email address.",
+    "validation.rating": "Choose a rating from 1 to 5."
   },
   "booking": {
     "eyebrow": "Contact / reservations",
@@ -97,7 +101,13 @@
     "save": "Save password",
     "checking": "Checking the link...",
     "loginLink": "Go to sign in",
-    "backToSite": "Back to site"
+    "backToSite": "Back to site",
+    "signingIn": "Signing in…",
+    "resetHelp": "No email? Check spam and the email address. If resending does not help, contact the site owner.",
+    "resendIn": "Resend available in",
+    "seconds": "s",
+    "minutes": "min",
+    "accessDenied": "This account cannot access the dashboard. Sign in with an email added by an administrator."
   },
   "admin": {
     "menu": "Menu",
@@ -191,7 +201,11 @@
       "Чай": "Tea",
       "Закуски": "Starters",
       "Горячее": "Main dishes",
-      "Десерты": "Desserts"
+      "Десерты": "Desserts",
+      "Вино": "Wine",
+      "Пиво": "Beer",
+      "Крепкий алкоголь": "Spirits",
+      "Салаты": "Salads"
     },
     "loadingError": "Content could not be loaded. Try refreshing the page later.",
     "retry": "Try again",
@@ -282,5 +296,50 @@
     "demoReset": "Demo registrations reset when the page reloads.",
     "website": "Website",
     "phonePlaceholder": "+996 700 123 456"
+  },
+  "experience": {
+    "location": "You are here",
+    "loading": "Loading page…",
+    "all": "Full menu",
+    "categories": "Menu categories",
+    "items": "Items",
+    "strength": "ABV",
+    "portion": "Serving",
+    "portionRu": "Serving size / weight RU",
+    "portionEn": "Serving size / weight EN",
+    "emptyCategory": "No items in this category yet.",
+    "reviewTitle": "Tell us about your visit",
+    "reviewIntro": "Share your experience. Your review will appear after moderation.",
+    "reviewName": "Your name",
+    "reviewRating": "Rating",
+    "reviewText": "Your review",
+    "reviewSubmit": "Submit review",
+    "reviewSending": "Sending review…",
+    "reviewSuccess": "Thank you! Your review has been sent for moderation.",
+    "reviewDemo": "Demo mode: your review is not saved or published.",
+    "reviewLanguage": "Reviews are kept in their original language.",
+    "reviewStars": "out of 5",
+    "ratingChoose": "Choose a rating",
+    "menuIntro": "From signature cocktails to dinner with a good book. Choose a category and find your favourite.",
+    "backTop": "Back to top",
+    "reviewWrite": "Write a review"
+  },
+  "team": {
+    "title": "Team",
+    "intro": "Add administrators who can manage content and requests. Only the owner can manage access.",
+    "email": "Administrator email",
+    "add": "Add and invite",
+    "sending": "Adding…",
+    "loading": "Loading team…",
+    "empty": "No additional administrators yet.",
+    "remove": "Remove access",
+    "confirmRemove": "Remove this administrator’s access?",
+    "added": "Access granted. An invitation has been emailed.",
+    "emailFailed": "Access granted, but the invitation could not be sent. Try inviting again later.",
+    "existing": "Access granted. This account already exists and can sign in with its password.",
+    "removed": "Access revoked.",
+    "ownerNote": "The owner keeps access regardless of this list.",
+    "ownerAlready": "The owner already has permanent access.",
+    "inviteAgain": "Resend invitation"
   }
 }

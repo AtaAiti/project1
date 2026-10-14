@@ -1,10 +1,10 @@
-import Link from "next/link";
+import Link from "@/components/feedback-link";
 import { getDictionary } from "@/lib/dictionaries";
 
 export function PublicFooter({ locale }: { locale: string }) {
   const t = getDictionary(locale);
   return (
-    <footer className="grid gap-8 border-t border-[var(--border)] bg-zinc-950 px-6 py-12 md:grid-cols-3 md:px-16">
+    <footer className="grid gap-8 border-t border-[var(--border)] bg-[var(--bg-secondary)] px-6 py-12 md:grid-cols-3 md:px-16">
       <div>
         <p className="display text-3xl">{t.publicUi.brand}</p>
         <p className="mt-3 text-sm text-[var(--text-secondary)]">{t.tagline}</p>

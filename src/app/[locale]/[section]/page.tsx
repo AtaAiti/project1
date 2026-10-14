@@ -1,14 +1,15 @@
-import Link from "next/link";
+import Link from "@/components/feedback-link";
 import { EventBadges } from "@/components/event-badges";
 import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
+import { MenuCatalog } from "@/components/menu-catalog";
+import { ReviewForm } from "@/components/review-form";
 import { getDictionary } from "@/lib/dictionaries";
 import {
   getEvents,
   getGallery,
   getMenu,
   getReviews,
-  menuImage,
   sortUpcoming,
   eventStartsAt,
   hasContentBackend,
@@ -29,7 +30,6 @@ export default async function SectionPage({
   const en = locale === "en";
   if (section === "menu") {
     const items = await getMenu();
-    const categories = [...new Set(items.map((item) => item.category))];
     return (
       <main>
         {(!hasContentBackend() ||
@@ -39,51 +39,13 @@ export default async function SectionPage({
         <div className="mx-auto max-w-6xl px-6 py-16">
           <p className="section-label">{d.nav.menu}</p>
           <h1 className="display mt-5 text-5xl">{t.menuTitle}</h1>
-          <p className="mt-5 text-sm text-[var(--text-secondary)]">
+          <p className="mt-5 max-w-2xl leading-7 text-[var(--text-secondary)]">
+            {d.experience.menuIntro}
+          </p>
+          <MenuCatalog items={items} locale={locale} />
+          <p className="mt-10 text-xs text-[var(--text-secondary)]">
             {t.stockNote}
           </p>
-          {!items.length && <p className="card mt-10 p-8">{t.emptyMenu}</p>}
-          {categories.map((category) => (
-            <section key={category} className="mt-12">
-              <h2 className="display text-3xl">
-                {t.categoryLabels[category as keyof typeof t.categoryLabels] ||
-                  category}
-              </h2>
-              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {items
-                  .filter((item) => item.category === category)
-                  .map((item) => (
-                    <article key={item.id} className="card overflow-hidden">
-                      <div className="relative aspect-[4/3]">
-                        <ContentImage
-                          src={menuImage(item)}
-                          alt={en ? item.name_en : item.name_ru}
-                        />
-                      </div>
-                      <div className="p-5">
-                        <div className="flex items-start justify-between gap-4">
-                          <h3 className="display text-2xl">
-                            {en ? item.name_en : item.name_ru}
-                          </h3>
-                          <span className="whitespace-nowrap text-[var(--gold)]">
-                            {item.price} {t.currency}
-                          </span>
-                        </div>
-                        <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
-                          {en ? item.composition_en : item.composition_ru}
-                        </p>
-                        <div className="mt-4 flex gap-4 text-sm">
-                          {item.strength && <span>{item.strength}</span>}
-                          {item.is_hit && (
-                            <span className="text-[var(--gold)]">{t.hit}</span>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-              </div>
-            </section>
-          ))}
         </div>
       </main>
     );
@@ -113,9 +75,11 @@ export default async function SectionPage({
                 {event.date} · {event.time.slice(0, 5)} · Asia/Bishkek
               </p>
               <h3 className="display mt-4 text-3xl">
-                <Link href={`/${locale}/afisha/${event.id}`}>{en ? event.title_en : event.title_ru}</Link>
+                <Link href={`/${locale}/afisha/${event.id}`}>
+                  {en ? event.title_en : event.title_ru}
+                </Link>
               </h3>
-              <EventBadges event={event} locale={locale}/>
+              <EventBadges event={event} locale={locale} />
               <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                 {en ? event.description_en : event.description_ru}
               </p>
@@ -210,7 +174,15 @@ export default async function SectionPage({
           </div>
         </section>
         <section className="mt-16">
-          <h2 className="display text-4xl">{t.reviews}</h2>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="display text-4xl">{t.reviews}</h2>
+            <Link href="#leave-review" className="btn-outline-gold">
+              {d.experience.reviewWrite}
+            </Link>
+          </div>
+          <p className="mt-3 text-sm text-[var(--text-secondary)]">
+            {d.experience.reviewLanguage}
+          </p>
           {reviews.length ? (
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               {reviews.map((review) => (
@@ -234,6 +206,7 @@ export default async function SectionPage({
             <p className="card mt-8 p-8">{t.emptyReviews}</p>
           )}
         </section>
+        <ReviewForm locale={locale} demo={!hasContentBackend()} />
       </div>
     </main>
   );

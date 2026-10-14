@@ -1,4 +1,5 @@
-import Link from "next/link";
+import Link from "@/components/feedback-link";
+import { MenuDetails } from "@/components/menu-details";
 import { EventBadges } from "@/components/event-badges";
 import { getDictionary } from "@/lib/dictionaries";
 import {
@@ -95,7 +96,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
                   <h3 className="display mt-4 text-2xl">
                     {en ? event.title_en : event.title_ru}
                   </h3>
-                  <EventBadges event={event} locale={locale}/>
+                  <EventBadges event={event} locale={locale} />
                   <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
                     {en ? event.description_en : event.description_ru}
                   </p>
@@ -143,6 +144,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
                   <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
                     {en ? item.composition_en : item.composition_ru}
                   </p>
+                  <MenuDetails item={item} locale={locale} />
                 </div>
               </article>
             ))}

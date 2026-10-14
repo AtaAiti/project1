@@ -53,7 +53,9 @@
       "composition_en": "Gin, tonic, citrus and rosemary",
       "strength": "12%",
       "price": 650,
-      "is_hit": true
+      "is_hit": true,
+      "portion_ru": "200 мл",
+      "portion_en": "200 ml"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000002",
@@ -64,7 +66,9 @@
       "composition_en": "Bourbon, cherry and spices",
       "strength": "15%",
       "price": 690,
-      "is_hit": true
+      "is_hit": true,
+      "portion_ru": "180 мл",
+      "portion_en": "180 ml"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000003",
@@ -75,7 +79,9 @@
       "composition_en": "Berry tea, mint and lemon",
       "strength": "0%",
       "price": 320,
-      "is_hit": false
+      "is_hit": false,
+      "portion_ru": "300 мл",
+      "portion_en": "300 ml"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000004",
@@ -86,7 +92,9 @@
       "composition_en": "Espresso, milk and soft foam",
       "strength": "0%",
       "price": 240,
-      "is_hit": true
+      "is_hit": true,
+      "portion_ru": "250 мл",
+      "portion_en": "250 ml"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000005",
@@ -97,7 +105,9 @@
       "composition_en": "Rice, salmon, seasonal vegetables and pesto",
       "strength": "",
       "price": 420,
-      "is_hit": false
+      "is_hit": false,
+      "portion_ru": "320 г",
+      "portion_en": "320 g"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000006",
@@ -108,7 +118,9 @@
       "composition_en": "Pasta, pesto, tomatoes and Parmesan",
       "strength": "",
       "price": 590,
-      "is_hit": true
+      "is_hit": true,
+      "portion_ru": "300 г",
+      "portion_en": "300 g"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000007",
@@ -119,7 +131,9 @@
       "composition_en": "Chocolate cake with berry sauce",
       "strength": "",
       "price": 350,
-      "is_hit": false
+      "is_hit": false,
+      "portion_ru": "150 г",
+      "portion_en": "150 g"
     },
     {
       "id": "d3e00000-0000-4000-8000-000000000008",
@@ -130,7 +144,9 @@
       "composition_en": "Black tea, thyme, honey on the side",
       "strength": "0%",
       "price": 280,
-      "is_hit": false
+      "is_hit": false,
+      "portion_ru": "500 мл",
+      "portion_en": "500 ml"
     }
   ],
   "events": [
