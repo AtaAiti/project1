@@ -39,7 +39,32 @@ async function query<T>(table: string, fallback: T[]): Promise<T[]> {
   return (data ?? []) as T[];
 }
 export const getMenu = cache(() => query<MenuItem>("menu_items", demoMenu));
-export const getEvents = cache(() => query<EventItem>("events", demoEvents));
+export const getEvents = cache(async () => {
+  if (!hasContentBackend()) return demoEvents;
+  const events = await query<EventItem>("events", []);
+  const client = await createClient();
+  const { data, error } = await client
+    .from("event_seats")
+    .select("event_id,seats_taken");
+  if (error)
+    throw new Error(
+      "Event seat counts are unavailable. Apply the RSVP migration.",
+    );
+  const seats = new Map(
+    (data || []).map((row) => [row.event_id, Number(row.seats_taken)]),
+  );
+  return events.map((event) => ({
+    ...event,
+    capacity: event.capacity ?? null,
+    is_club_meeting: event.is_club_meeting ?? false,
+    seats_taken: seats.get(event.id) ?? 0,
+  }));
+});
+export const getEvent = cache(async (id: string) =>
+  (await getEvents()).find(
+    (event) => event.id === id && event.status === "published",
+  ),
+);
 export const getGallery = cache(() =>
   query<GalleryPhoto>("gallery_photos", demoGallery),
 );

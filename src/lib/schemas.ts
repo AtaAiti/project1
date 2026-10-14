@@ -26,9 +26,17 @@ export const bookingSchema = z.strictObject({
   website: z.string().max(1000).optional(),
 });
 
+export const rsvpSchema = z.strictObject({
+  event_id: z.uuid({ error: "validation.invalid" }),
+  name: requiredText,
+  phone: phoneSchema,
+  guests: formInteger.pipe(z.number().int({ error: "validation.guests" }).min(1, "validation.guests").max(6, "validation.guests")).default(1),
+  website: z.string().max(1000).optional(),
+});
+
 export const resourceSchemas = {
   menu_items: z.strictObject({ category: requiredText, name_ru: requiredText, name_en: requiredText, composition_ru: description.default(""), composition_en: description.default(""), strength: optionalText.default(""), price: z.number().finite().min(0).max(1000000), is_hit: z.boolean().default(false) }),
-  events: z.strictObject({ date: dateSchema, time: timeSchema, title_ru: requiredText, title_en: requiredText, description_ru: description.default(""), description_en: description.default(""), image_url: imageUrl.default(""), status: z.enum(["draft", "published", "moderation"]).default("draft") }),
+  events: z.strictObject({ date: dateSchema, time: timeSchema, title_ru: requiredText, title_en: requiredText, description_ru: description.default(""), description_en: description.default(""), image_url: imageUrl.default(""), capacity: z.number().int().positive().max(1000000).nullable().default(null), is_club_meeting: z.boolean().default(false), status: z.enum(["draft", "published", "moderation"]).default("draft") }),
   gallery_photos: z.strictObject({ image_url: z.url().refine((value) => value.startsWith("https://")), caption_ru: optionalText.default(""), caption_en: optionalText.default("") }),
   reviews: z.strictObject({ author: requiredText, rating: z.number().int().min(1).max(5), text_ru: description.min(1), text_en: description.default(""), status: z.enum(["published", "moderation"]).default("moderation") }),
   // Reserved foundation contracts; tables/features arrive in their respective PRs.

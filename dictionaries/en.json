@@ -39,7 +39,14 @@
     "error.unauthorized": "Sign in to your administrator account.",
     "error.forbidden": "This account does not have permission to manage the site.",
     "error.notFound": "Section not found.",
-    "error.methodNotAllowed": "This operation is unavailable."
+    "error.methodNotAllowed": "This operation is unavailable.",
+    "rsvp.notFound": "Event not found or not published.",
+    "rsvp.past": "The event has ended. Registration is closed.",
+    "rsvp.soldOut": "Sold out.",
+    "rsvp.notEnoughSeats": "There are not enough seats for your group. Reduce the number of guests.",
+    "rsvp.duplicate": "This phone number is already registered for this event.",
+    "rsvp.scheduleLocked": "Date and time cannot change while guests are registered. Cancel registrations and agree on rescheduling first.",
+    "rsvp.capacityBelowTaken": "Capacity cannot be lower than the number of registered guests."
   },
   "booking": {
     "eyebrow": "Contact / reservations",
@@ -244,5 +251,36 @@
     "filter": "Search",
     "preview": "View on site",
     "statusUpdated": "Status saved"
+  },
+  "rsvp": {
+    "title": "Event registration",
+    "name": "Name",
+    "phone": "Phone",
+    "guests": "Guests",
+    "submit": "Register",
+    "sending": "Submitting…",
+    "success": "You are registered for the event.",
+    "soldOut": "Sold out.",
+    "past": "This event has ended. Registration is closed.",
+    "seatsTaken": "Seats taken",
+    "seatsLeft": "Seats left",
+    "unlimited": "No capacity limit",
+    "club": "Reading club",
+    "details": "Details and registration",
+    "back": "All events",
+    "demo": "Demo: registration is simulated in this browser only, without database writes or Telegram.",
+    "capacity": "Capacity (empty — unlimited)",
+    "clubField": "Reading club meeting",
+    "list": "Event registrations",
+    "empty": "No registrations for this event yet.",
+    "createdAt": "Registered at",
+    "remove": "Delete registration",
+    "confirmDelete": "Delete this registration and free the seats?",
+    "loading": "Loading registrations…",
+    "notFound": "Event not found",
+    "newRsvp": "New event registration",
+    "demoReset": "Demo registrations reset when the page reloads.",
+    "website": "Website",
+    "phonePlaceholder": "+996 700 123 456"
   }
 }

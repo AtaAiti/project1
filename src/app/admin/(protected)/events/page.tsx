@@ -1,7 +1,7 @@
 import { ResourceEditor } from "@/components/admin/resource-editor";
 import { getDictionary } from "@/lib/dictionaries";
 export default function EventsPage() {
-  const { admin: t, adminExtra: x } = getDictionary("ru");
+  const { admin: t, adminExtra: x, rsvp: r } = getDictionary("ru");
   return (
     <ResourceEditor
       resource="events"
@@ -20,6 +20,8 @@ export default function EventsPage() {
         description_en: "",
         image_url: "",
         status: "draft",
+        capacity: null,
+        is_club_meeting: false,
       }}
       fields={[
         { key: "date", label: t.date, type: "date", required: true },
@@ -29,6 +31,14 @@ export default function EventsPage() {
         { key: "description_ru", label: t.descriptionRu, type: "textarea" },
         { key: "description_en", label: t.descriptionEn, type: "textarea" },
         { key: "image_url", label: x.imageUrl, type: "url" },
+        {
+          key: "capacity",
+          label: r.capacity,
+          type: "number",
+          min: 1,
+          max: 1000000,
+        },
+        { key: "is_club_meeting", label: r.clubField, type: "checkbox" },
         {
           key: "status",
           label: t.status,

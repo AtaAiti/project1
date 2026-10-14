@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventBadges } from "@/components/event-badges";
 import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { getDictionary } from "@/lib/dictionaries";
@@ -26,7 +27,6 @@ export default async function SectionPage({
   const d = getDictionary(locale);
   const t = d.publicUi;
   const en = locale === "en";
-  const booking = `/booking?locale=${locale}`;
   if (section === "menu") {
     const items = await getMenu();
     const categories = [...new Set(items.map((item) => item.category))];
@@ -113,22 +113,20 @@ export default async function SectionPage({
                 {event.date} · {event.time.slice(0, 5)} · Asia/Bishkek
               </p>
               <h3 className="display mt-4 text-3xl">
-                {en ? event.title_en : event.title_ru}
+                <Link href={`/${locale}/afisha/${event.id}`}>{en ? event.title_en : event.title_ru}</Link>
               </h3>
+              <EventBadges event={event} locale={locale}/>
               <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                 {en ? event.description_en : event.description_ru}
               </p>
               {futureIds.has(event.id) && (
                 <>
                   <Link
-                    href={booking}
+                    href={`/${locale}/afisha/${event.id}`}
                     className="btn-outline-gold mt-6 inline-block"
                   >
-                    {t.bookTable}
+                    {d.rsvp.details}
                   </Link>
-                  <p className="mt-3 text-xs text-[var(--text-secondary)]">
-                    {t.eventBookingNote}
-                  </p>
                 </>
               )}
             </div>

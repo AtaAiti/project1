@@ -5,6 +5,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import { ContentImage } from "@/components/content-image";
 import { isDemoRecord } from "@/lib/demo-content";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Row = Record<string, string | number | boolean | null> & { id: string };
 type Field = {
@@ -239,6 +240,14 @@ export function ResourceEditor({
                       {t.demoRecord}
                     </p>
                   )}
+                  {resource === "events" && (
+                    <Link
+                      href={`/admin/events/${row.id}`}
+                      className="mt-4 inline-block text-sm text-[var(--gold)]"
+                    >
+                      {d.rsvp.list}
+                    </Link>
+                  )}
                   <div className="mt-5 flex gap-5">
                     <button
                       className="text-sm text-[var(--gold)]"
@@ -351,7 +360,10 @@ export function ResourceEditor({
                           ...editing,
                           [field.key]:
                             field.type === "number"
-                              ? Number(event.target.value)
+                              ? field.key === "capacity" &&
+                                event.target.value === ""
+                                ? null
+                                : Number(event.target.value)
                               : event.target.value,
                         })
                       }
