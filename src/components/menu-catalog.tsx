@@ -30,7 +30,7 @@ export function MenuCatalog({
     <>
       <nav
         aria-label={t.categories}
-        className="sticky top-20 z-20 -mx-2 mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-primary)]/95 p-3 backdrop-blur"
+        className="sticky top-24 z-20 -mx-2 mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-primary)]/95 p-3 backdrop-blur"
       >
         <div className="flex flex-wrap gap-2">
           {["", ...categories].map((category) => (

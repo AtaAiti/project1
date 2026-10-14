@@ -62,7 +62,7 @@ export function ReviewForm({
   return (
     <section
       id="leave-review"
-      className="card mt-12 scroll-mt-24 p-6 md:p-8"
+      className="card mt-12 scroll-mt-28 p-6 md:p-8"
       aria-labelledby={id + "-title"}
     >
       <div className="grid gap-8 lg:grid-cols-[1fr_1.3fr]">
