@@ -42,3 +42,36 @@
 9. Запустить сборку без Supabase и проверить обозначенную симуляцию всех пяти сценариев без сетевых POST.
 
 Webhook/inline-кнопки Telegram, Book of the Month, ICS и остальные следующие PR не начаты. После этого PR работа останавливается для согласования.
+
+## Изменённые файлы
+
+- `README.md`
+- `dictionaries/en.json`
+- `dictionaries/ru.json`
+- `docs/pr2-review.md`
+- `scripts/check-rsvp-live.mjs`
+- `scripts/seed-rsvp-dev.mjs`
+- `scripts/test-rsvp-concurrency.mjs`
+- `src/app/[locale]/[section]/page.tsx`
+- `src/app/[locale]/afisha/[id]/not-found.tsx`
+- `src/app/[locale]/afisha/[id]/page.tsx`
+- `src/app/[locale]/page.tsx`
+- `src/app/admin/(protected)/events/[id]/page.tsx`
+- `src/app/admin/(protected)/events/page.tsx`
+- `src/app/api/admin/[resource]/route.ts`
+- `src/app/api/rsvp/route.ts`
+- `src/components/admin/event-rsvps.tsx`
+- `src/components/admin/resource-editor.tsx`
+- `src/components/event-badges.tsx`
+- `src/components/rsvp-form.tsx`
+- `src/lib/content.ts`
+- `src/lib/demo-content.ts`
+- `src/lib/rsvp-errors.ts`
+- `src/lib/schemas.ts`
+- `supabase/migrations/20261014000100_0003_event_rsvp.sql`
+- `supabase/schema.sql`
+- `tests/content.test.ts`
+- `tests/rsvp-migration.test.ts`
+- `tests/rsvp-route.test.ts`
+
+Функциональных уточняющих вопросов нет.
