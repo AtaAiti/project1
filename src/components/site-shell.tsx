@@ -87,7 +87,7 @@ export function SiteShell({
             {other.toUpperCase()}
           </Link>
           <Link
-            href="/admin"
+            href="/admin/login"
             className="rounded border border-[var(--gold)] px-3 py-2 text-xs text-[var(--gold)]"
           >
             {t.adminLogin}
@@ -148,7 +148,7 @@ export function SiteShell({
               {other.toUpperCase()}
             </Link>
             <Link
-              href="/admin"
+              href="/admin/login"
               onClick={() => setMenuOpen(false)}
               className="mt-6 block text-[var(--gold)]"
             >
