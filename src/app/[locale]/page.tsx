@@ -1,3 +1,191 @@
 import Link from "next/link";
 import { getDictionary } from "@/lib/dictionaries";
-export default async function Home({ params }: PageProps<"/[locale]">) { const { locale } = await params; const t = getDictionary(locale); const en = locale === "en"; return <main><section className="relative flex min-h-[760px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_70%_40%,#4c3518,#0a0a0a_58%)] px-6 text-center"><div className="absolute inset-0 bg-black/30"/><div className="relative z-10 max-w-3xl"><h1 className="display text-6xl font-bold md:text-8xl">{en ? "Literator" : "ЛитераторЪ"}</h1><p className="display mt-3 text-2xl text-[var(--gold)]">{t.tagline}</p><p className="mx-auto mt-6 max-w-xl text-base leading-7 text-[var(--text-secondary)]">{en ? "A discreet literary salon in the heart of Moscow, where rare books meet author-led cocktail culture and unhurried conversation." : "Тайный литературный бар, где редкие книги, авторские коктейли и тихие беседы складываются в одну историю."}</p><Link href="/booking" className="btn-gold mt-10 inline-block">{en ? "Reserve a table" : "Забронировать стол"}</Link></div><div className="absolute bottom-8 text-[10px] uppercase tracking-[.2em] text-[var(--text-muted)]">{en ? "Read on" : "Листайте вниз"}<span className="ml-3 text-[var(--gold)]">⌄</span></div></section><section className="grid items-center gap-12 bg-[var(--bg-secondary)] px-6 py-24 md:grid-cols-2 md:px-28"><div><p className="section-label">{en ? "The concept" : "О концепции"}</p><h2 className="display mt-4 text-4xl leading-tight md:text-5xl">{en ? "A twenty-first-century literary salon" : "Литературный салон XXI века"}</h2><p className="mt-6 text-base leading-7 text-[var(--text-secondary)]">{en ? "We created Literator as a refuge from the city's rush. Here the whisper of turning pages mingles with crystal glassware, while low lamplight settles over dark polished wood." : "Мы создали «ЛитераторЪ» как убежище от городского шума. Здесь шелест страниц смешивается со звоном хрусталя, а ламповый свет ложится на тёмное дерево."}</p><Link href={`/${locale}/about`} className="btn-outline-gold mt-8 inline-block">{en ? "Discover our story" : "Узнать больше"}</Link></div><div className="aspect-square bg-[linear-gradient(135deg,#5d4323,#1a1510_55%,#9e7030)]"/></section><section className="px-6 py-24 md:px-28"><p className="section-label">{en ? "Cultural programme" : "Культурная программа"}</p><h2 className="display mt-4 text-4xl">{en ? "This week at Literator" : "События этой недели"}</h2><div className="mt-12 grid gap-7 md:grid-cols-3">{(en ? [["14 MAY · THU 19:30","Poetry Slam","Contemporary poets share new work in the intimate half-light of our library."],["15 MAY · FRI 21:00","An Evening of Vinyl Jazz","Warm analogue recordings and cocktails inspired by the Beat generation."],["17 MAY · SUN 18:00","The Bulgakov Book Club","A close reading over a smoky blackberry punch."]] : [["14 МАЯ · ЧТ 19:30","Поэтический слэм","Петербургские авторы читают новые тексты в уютном полумраке библиотеки."],["15 МАЯ · ПТ 21:00","Виниловый джаз","Тёплый звук, живой трио и авторские коктейли до полуночи."],["17 МАЯ · ВС 18:00","Книжный клуб Булгакова","Близкое чтение за бокалом дымного ежевичного пунша."]]).map(([date,title,text]) => <article className="card overflow-hidden" key={title}><div className="h-56 bg-[linear-gradient(135deg,#6b4a22,#17130f)]"/><div className="flex min-h-56 flex-col justify-between p-6"><div><p className="text-xs text-[var(--gold)]">{date}</p><h3 className="display mt-3 text-2xl">{title}</h3><p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{text}</p></div><Link href="/booking" className="mt-6 text-xs underline">{en ? "Register" : "Зарегистрироваться"}</Link></div></article>)}</div><div className="mt-12 text-center"><Link href={`/${locale}/afisha`} className="btn-outline-gold inline-block">{en ? "View all events" : "Вся афиша"}</Link></div></section><section className="bg-[var(--bg-secondary)] px-6 py-24 md:px-28"><p className="section-label">{en ? "Signature serves" : "Фирменные напитки"}</p><h2 className="display mt-4 text-4xl">{en ? "The liquid library" : "Жидкая библиотека"}</h2><div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{[["Gatsby","₽890"],["Anna Karenina","₽950"],["Master & Margarita","₽1,100"],["Sherlock","₽1,050"]].map(([name,price]) => <article className="card overflow-hidden" key={name}><div className="h-56 bg-[radial-gradient(circle_at_50%_35%,#c8933b,#292016_35%,#111_70%)]"/><div className="p-5"><div className="flex justify-between gap-3"><h3 className="display text-xl">{name}</h3><span className="text-sm text-[var(--gold)]">{price}</span></div><p className="mt-3 text-xs leading-5 text-[var(--text-secondary)]">{en ? "A considered composition from our literary bar." : "Продуманная композиция из литературной карты бара."}</p></div></article>)}</div><div className="mt-12 text-center"><Link href={`/${locale}/menu`} className="btn-outline-gold inline-block">{en ? "Explore the menu" : "Открыть меню"}</Link></div></section><section className="grid gap-12 px-6 py-24 md:grid-cols-2 md:px-28"><div><p className="section-label">{en ? "Find us" : "Как нас найти"}</p><h2 className="display mt-4 text-4xl">{en ? "Contact & reservations" : "Контакты и резерв"}</h2><div className="mt-10 grid gap-5 text-base text-[var(--text-secondary)]"><p>⌖ {en ? "42 Literaturnaya Street, Moscow" : "ул. Литературная, 42, Москва"}</p><p>◷ {en ? "Mon–Thu 18:00–02:00 · Fri–Sun 18:00–04:00" : "Пн–Чт 18:00–02:00 · Пт–Вс 18:00–04:00"}</p><p>☎ +7 999 123-45-67</p></div><div className="mt-8 flex gap-3"><Link href="/booking" className="btn-gold">Reserve</Link><a href="https://wa.me/79991234567" className="btn-outline-gold">WhatsApp</a></div></div><div className="min-h-80 border border-[var(--border)] bg-[radial-gradient(circle_at_35%_40%,#4b3820,#12100d_60%)]"/></section><footer className="grid gap-10 border-t border-[var(--border)] bg-zinc-950 px-6 py-14 md:grid-cols-3 md:px-20"><div><p className="display text-3xl font-bold">ЛИТЕРАТОРЪ</p><p className="mt-2 text-xs uppercase tracking-[.2em] text-[var(--gold)]">Место встречи между строк</p><p className="mt-4 max-w-xs text-xs leading-5 text-[var(--text-secondary)]">{en ? "A literary bar and reading club for conversation, rare books and fine cocktail dramaturgy." : "Литературный бар и клуб для чтения, разговоров и лучшей алкогольной драматургии."}</p></div><div><p className="section-label">{en ? "Explore" : "Навигация"}</p><div className="mt-4 grid gap-2 text-xs text-[var(--text-secondary)]"><Link href={`/${locale}/about`}>{t.nav.about}</Link><Link href={`/${locale}/afisha`}>{t.nav.afisha}</Link><Link href={`/${locale}/menu`}>{t.nav.menu}</Link><Link href={`/${locale}/contacts`}>{t.nav.contacts}</Link></div></div><div><p className="section-label">{en ? "Community" : "Сообщество"}</p><div className="mt-4 grid gap-2 text-xs text-[var(--text-secondary)]"><span>Telegram</span><span>WhatsApp</span><span>Instagram</span><span>Maps</span></div></div></footer></main>; }
+import {
+  getMenu,
+  getEvents,
+  getGallery,
+  menuImage,
+  sortUpcoming,
+  hasContentBackend,
+} from "@/lib/content";
+import { isDemoRecord, stockImage } from "@/lib/demo-content";
+import { ContentImage } from "@/components/content-image";
+import { DemoNotice } from "@/components/demo-notice";
+
+export default async function Home({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
+  const d = getDictionary(locale);
+  const t = d.publicUi;
+  const en = locale === "en";
+  const [menu, events, gallery] = await Promise.all([
+    getMenu(),
+    getEvents(),
+    getGallery(),
+  ]);
+  const upcoming = sortUpcoming(events).slice(0, 3);
+  const featured = [...menu]
+    .sort((a, b) => Number(b.is_hit) - Number(a.is_hit))
+    .slice(0, 4);
+  const hero = gallery[0]?.image_url || stockImage("library");
+  const concept = gallery[1]?.image_url || stockImage("lounge");
+  const demo =
+    !hasContentBackend() ||
+    [...menu, ...events].some((row) => isDemoRecord(row.id));
+  const booking = `/booking?locale=${locale}`;
+  return (
+    <main>
+      {demo && <DemoNotice locale={locale} />}
+      <section className="relative isolate flex min-h-[620px] items-center justify-center px-6 py-24 text-center md:min-h-[720px]">
+        <ContentImage src={hero} alt="" sizes="100vw" preload />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative z-10 max-w-3xl">
+          <p className="section-label">{d.hero.eyebrow}</p>
+          <h1 className="display mt-6 text-6xl md:text-8xl">{t.brand}</h1>
+          <p className="display mt-5 text-2xl text-[var(--gold)]">
+            {d.tagline}
+          </p>
+          <p className="mx-auto mt-7 max-w-xl text-base leading-7">{t.intro}</p>
+          <Link href={booking} className="btn-gold mt-10 inline-block">
+            {t.reserve}
+          </Link>
+        </div>
+      </section>
+      <section className="grid items-center gap-10 bg-[var(--bg-secondary)] px-6 py-20 md:grid-cols-2 md:px-16">
+        <div>
+          <p className="section-label">{t.concept}</p>
+          <h2 className="display mt-4 text-4xl md:text-5xl">
+            {t.conceptTitle}
+          </h2>
+          <p className="mt-6 text-base leading-8 text-[var(--text-secondary)]">
+            {t.conceptText}
+          </p>
+          <Link
+            href={`/${locale}/about`}
+            className="btn-outline-gold mt-8 inline-block"
+          >
+            {t.discover}
+          </Link>
+        </div>
+        <div className="relative aspect-[4/3] overflow-hidden rounded">
+          <ContentImage
+            src={concept}
+            alt={t.stockNote}
+            sizes="(max-width:768px) 100vw, 50vw"
+          />
+        </div>
+      </section>
+      <section className="px-6 py-20 md:px-16">
+        <p className="section-label">{t.programme}</p>
+        <h2 className="display mt-4 text-4xl">{t.upcoming}</h2>
+        {upcoming.length ? (
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {upcoming.map((event) => (
+              <article key={event.id} className="card overflow-hidden">
+                <div className="relative aspect-[4/3]">
+                  <ContentImage
+                    src={event.image_url || stockImage("library")}
+                    alt={en ? event.title_en : event.title_ru}
+                  />
+                </div>
+                <div className="p-6">
+                  <p className="text-sm text-[var(--gold)]">
+                    {event.date} · {event.time.slice(0, 5)} · Asia/Bishkek
+                  </p>
+                  <h3 className="display mt-4 text-2xl">
+                    {en ? event.title_en : event.title_ru}
+                  </h3>
+                  <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+                    {en ? event.description_en : event.description_ru}
+                  </p>
+                  <Link
+                    href={`/${locale}/afisha`}
+                    className="mt-6 inline-block text-sm text-[var(--gold)]"
+                  >
+                    {t.allEvents} →
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="card mt-10 p-8">{t.emptyEvents}</p>
+        )}
+        <Link
+          href={`/${locale}/afisha`}
+          className="btn-outline-gold mt-10 inline-block"
+        >
+          {t.allEvents}
+        </Link>
+      </section>
+      <section className="bg-[var(--bg-secondary)] px-6 py-20 md:px-16">
+        <p className="section-label">{t.menuEyebrow}</p>
+        <h2 className="display mt-4 text-4xl">{t.menuTitle}</h2>
+        {featured.length ? (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((item) => (
+              <article key={item.id} className="card overflow-hidden">
+                <div className="relative aspect-[4/3]">
+                  <ContentImage
+                    src={menuImage(item)}
+                    alt={en ? item.name_en : item.name_ru}
+                    sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="display text-2xl">
+                    {en ? item.name_en : item.name_ru}
+                  </h3>
+                  <p className="mt-3 text-[var(--gold)]">
+                    {item.price} {t.currency}
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                    {en ? item.composition_en : item.composition_ru}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="card mt-10 p-8">{t.emptyMenu}</p>
+        )}
+        <p className="mt-5 text-xs text-[var(--text-secondary)]">
+          {t.stockNote}
+        </p>
+        <Link
+          href={`/${locale}/menu`}
+          className="btn-outline-gold mt-10 inline-block"
+        >
+          {t.allMenu}
+        </Link>
+      </section>
+      <section className="grid gap-10 px-6 py-20 md:grid-cols-2 md:px-16">
+        <div>
+          <h2 className="display text-4xl">{t.contacts}</h2>
+          <p className="mt-6">{t.address}</p>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            {t.addressNote}
+          </p>
+          <p className="mt-5">{t.hours}</p>
+          <a href="tel:+996779118824" className="mt-5 block">
+            {t.phone}
+          </a>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href={booking} className="btn-gold">
+              {t.reserve}
+            </Link>
+            <a href="https://wa.me/996779118824" className="btn-outline-gold">
+              {t.whatsapp}
+            </a>
+          </div>
+        </div>
+        <div className="relative min-h-80 overflow-hidden rounded">
+          <ContentImage
+            src={stockImage("coffee")}
+            alt={t.stockNote}
+            sizes="(max-width:768px) 100vw, 50vw"
+          />
+        </div>
+      </section>
+    </main>
+  );
+}

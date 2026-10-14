@@ -39,6 +39,7 @@ export type AdminResource = keyof typeof resourceSchemas;
 export const adminResourceSchema = z.enum(["menu_items", "events", "gallery_photos", "reviews", "books", "event_rsvps"]);
 export const adminDeleteSchema = z.strictObject({ id: z.uuid() });
 export const adminListQuerySchema = z.strictObject({ event_id: z.uuid().optional() });
+export const adminBookingStatusSchema = z.strictObject({ id: z.uuid(), status: z.enum(["pending", "confirmed", "declined"]) });
 
 export function adminPatchSchema(resource: AdminResource) {
   const shape = Object.fromEntries(Object.entries(resourceSchemas[resource].shape).map(([key, field]) => [key, (field instanceof z.ZodDefault ? field.removeDefault() : field).optional()]));

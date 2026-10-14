@@ -1,9 +1,101 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { getDictionary } from "@/lib/dictionaries";
-const t = getDictionary("ru").admin;
-import { usePathname } from "next/navigation";
 
-const items = [["/admin", t.overview, "▦"], ["/admin/menu", t.menu, "♜"], ["/admin/events", t.events, "▣"], ["/admin/gallery", t.gallery, "▧"], ["/admin/reviews", t.reviews, "☆"]] as const;
-export default function AdminLayout({ children }: { children: React.ReactNode }) { const pathname = usePathname(); return <div className="min-h-screen bg-[var(--bg-primary)]"><aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-[var(--border)] bg-zinc-950 px-5 py-8 md:flex"><Link href="/admin" className="display text-xl font-bold">ЛИТЕРАТОРЪ</Link><nav className="mt-9 flex-1 space-y-2">{items.map(([href, label, icon]) => { const active = href === "/admin" ? pathname === href : pathname.startsWith(href); return <Link key={href} href={href} className={`flex h-11 items-center gap-3 px-3.5 text-sm ${active ? "bg-[var(--gold)]/20 text-[var(--text-primary)] outline outline-1 outline-[var(--gold)]" : "text-[var(--text-secondary)] hover:bg-white/5"}`}><span className={active ? "text-[var(--gold)]" : "text-[var(--text-muted)]"}>{icon}</span>{label}</Link>; })}</nav><div className="flex items-center gap-3 border-t border-[var(--border)] pt-4"><span className="grid h-8 w-8 place-items-center bg-[var(--gold)] text-xs font-bold text-black" aria-hidden="true">А</span><span><b className="block text-xs">{t.administrator}</b><small className="text-xs text-[var(--text-muted)]">{t.manageSite}</small></span></div></aside><div className="md:ml-60">{children}</div></div>; }
+const d = getDictionary("ru");
+const t = d.admin;
+const x = d.adminExtra;
+const items = [
+  ["/admin", t.overview],
+  ["/admin/menu", t.menu],
+  ["/admin/events", t.events],
+  ["/admin/gallery", t.gallery],
+  ["/admin/reviews", t.reviews],
+  ["/admin/bookings", x.bookings],
+] as const;
+
+export default function AdminShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function logout() {
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error("Logout failed");
+      router.replace("/ru");
+      router.refresh();
+    } catch {
+      setError(x.logoutFailed);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const navigation = (
+    <nav className="flex gap-2 overflow-x-auto md:flex-col">
+      {items.map(([href, label]) => (
+        <Link
+          key={href}
+          href={href}
+          aria-current={pathname === href ? "page" : undefined}
+          className={`whitespace-nowrap rounded px-3 py-3 text-sm ${pathname === href ? "bg-[var(--gold)]/20 text-[var(--gold)]" : "text-[var(--text-primary)]"}`}
+        >
+          {label}
+        </Link>
+      ))}
+    </nav>
+  );
+  return (
+    <div className="min-h-screen">
+      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-[var(--border)] bg-zinc-950 p-5 md:flex">
+        <Link href="/admin" className="display mb-8 text-2xl">
+          ЛИТЕРАТОРЪ
+        </Link>
+        {navigation}
+        <div className="mt-auto grid gap-4 border-t border-[var(--border)] pt-5">
+          <Link className="text-sm text-[var(--gold)]" href="/ru">
+            {x.visitorSite}
+          </Link>
+          <button
+            className="text-left text-sm"
+            disabled={busy}
+            onClick={logout}
+          >
+            {x.logout}
+          </button>
+          {error && (
+            <p role="alert" className="text-sm">
+              {error}
+            </p>
+          )}
+        </div>
+      </aside>
+      <div className="md:hidden border-b border-[var(--border)] bg-zinc-950 p-4">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <Link href="/ru" className="text-sm text-[var(--gold)]">
+            {x.visitorSite}
+          </Link>
+          <button disabled={busy} onClick={logout} className="text-sm">
+            {x.logout}
+          </button>
+        </div>
+        {navigation}
+        {error && (
+          <p role="alert" className="mt-3 text-sm">
+            {error}
+          </p>
+        )}
+      </div>
+      <div className="md:ml-60">{children}</div>
+    </div>
+  );
+}

@@ -1,0 +1,260 @@
+{
+  "stockPhotos": [
+    {
+      "slug": "library",
+      "source": "photo-1507842217343-583bb7270b66",
+      "caption_ru": "Книжные полки — стоковое фото",
+      "caption_en": "Bookshelves — stock photograph"
+    },
+    {
+      "slug": "lounge",
+      "source": "photo-1514933651103-005eec06c04b",
+      "caption_ru": "Атмосфера барного зала — стоковое фото",
+      "caption_en": "Bar atmosphere — stock photograph"
+    },
+    {
+      "slug": "cocktails",
+      "source": "photo-1470337458703-46ad1756a187",
+      "caption_ru": "Коктейли и вечерние разговоры — стоковое фото",
+      "caption_en": "Cocktails and conversation — stock photograph"
+    },
+    {
+      "slug": "coffee",
+      "source": "photo-1509042239860-f550ce710b93",
+      "caption_ru": "Кофе и неспешное чтение — стоковое фото",
+      "caption_en": "Coffee and unhurried reading — stock photograph"
+    },
+    {
+      "slug": "salad",
+      "source": "photo-1547592180-85f173990554",
+      "caption_ru": "Сезонные блюда — стоковое фото",
+      "caption_en": "Seasonal dishes — stock photograph"
+    },
+    {
+      "slug": "pasta",
+      "source": "photo-1473093295043-cdd812d0e601",
+      "caption_ru": "Ужин за разговором — стоковое фото",
+      "caption_en": "Dinner and conversation — stock photograph"
+    },
+    {
+      "slug": "dessert",
+      "source": "photo-1578985545062-69928b1d9587",
+      "caption_ru": "Десерт к любимой книге — стоковое фото",
+      "caption_en": "Dessert with a favourite book — stock photograph"
+    }
+  ],
+  "menu": [
+    {
+      "id": "d3e00000-0000-4000-8000-000000000001",
+      "category": "Коктейли",
+      "name_ru": "Гэтсби",
+      "name_en": "Gatsby",
+      "composition_ru": "Джин, тоник, цитрус и розмарин",
+      "composition_en": "Gin, tonic, citrus and rosemary",
+      "strength": "12%",
+      "price": 650,
+      "is_hit": true
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000002",
+      "category": "Коктейли",
+      "name_ru": "Анна Каренина",
+      "name_en": "Anna Karenina",
+      "composition_ru": "Бурбон, вишня и пряности",
+      "composition_en": "Bourbon, cherry and spices",
+      "strength": "15%",
+      "price": 690,
+      "is_hit": true
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000003",
+      "category": "Безалкогольные",
+      "name_ru": "Тихая глава",
+      "name_en": "A Quiet Chapter",
+      "composition_ru": "Ягодный чай, мята и лимон",
+      "composition_en": "Berry tea, mint and lemon",
+      "strength": "0%",
+      "price": 320,
+      "is_hit": false
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000004",
+      "category": "Кофе",
+      "name_ru": "Капучино читателя",
+      "name_en": "Reader's Cappuccino",
+      "composition_ru": "Эспрессо, молоко, мягкая пена",
+      "composition_en": "Espresso, milk and soft foam",
+      "strength": "0%",
+      "price": 240,
+      "is_hit": true
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000005",
+      "category": "Закуски",
+      "name_ru": "Боул «Зелёные страницы»",
+      "name_en": "Green Pages Bowl",
+      "composition_ru": "Рис, лосось, сезонные овощи и песто",
+      "composition_en": "Rice, salmon, seasonal vegetables and pesto",
+      "strength": "",
+      "price": 420,
+      "is_hit": false
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000006",
+      "category": "Горячее",
+      "name_ru": "Паста «Долгий разговор»",
+      "name_en": "Long Conversation Pasta",
+      "composition_ru": "Паста, песто, томаты и пармезан",
+      "composition_en": "Pasta, pesto, tomatoes and Parmesan",
+      "strength": "",
+      "price": 590,
+      "is_hit": true
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000007",
+      "category": "Десерты",
+      "name_ru": "Шоколадная глава",
+      "name_en": "The Chocolate Chapter",
+      "composition_ru": "Шоколадный торт и ягодный соус",
+      "composition_en": "Chocolate cake with berry sauce",
+      "strength": "",
+      "price": 350,
+      "is_hit": false
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000008",
+      "category": "Чай",
+      "name_ru": "Чай книжного клуба",
+      "name_en": "Book Club Tea",
+      "composition_ru": "Чёрный чай, чабрец, мёд отдельно",
+      "composition_en": "Black tea, thyme, honey on the side",
+      "strength": "0%",
+      "price": 280,
+      "is_hit": false
+    }
+  ],
+  "events": [
+    {
+      "id": "d3e00000-0000-4000-8000-000000000101",
+      "date": "2026-11-07",
+      "time": "19:00",
+      "title_ru": "Демо: вечер книжного клуба",
+      "title_en": "Demo: book club evening",
+      "description_ru": "Демонстрационное событие: обсуждаем любимые книги за чашкой чая. Это пример для просмотра сайта, не реальная афиша.",
+      "description_en": "Demonstration event: share favourite books over tea. This is sample content, not a real event announcement.",
+      "status": "published",
+      "image_url": "/images/stock/library.jpg"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000102",
+      "date": "2026-11-14",
+      "time": "20:00",
+      "title_ru": "Демо: виниловый джаз",
+      "title_en": "Demo: vinyl jazz night",
+      "description_ru": "Демонстрационный музыкальный вечер: джазовые пластинки и авторские коктейли.",
+      "description_en": "A sample music evening with jazz records and signature cocktails.",
+      "status": "published",
+      "image_url": "/images/stock/lounge.jpg"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000103",
+      "date": "2026-11-21",
+      "time": "18:30",
+      "title_ru": "Демо: открытый микрофон",
+      "title_en": "Demo: open mic poetry",
+      "description_ru": "Демонстрационная встреча с поэзией и короткими историями гостей.",
+      "description_en": "A sample gathering with poetry and short stories from guests.",
+      "status": "published",
+      "image_url": "/images/stock/coffee.jpg"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000104",
+      "date": "2026-09-12",
+      "time": "19:00",
+      "title_ru": "Демо: прошедшая литературная встреча",
+      "title_en": "Demo: past literary gathering",
+      "description_ru": "Пример прошедшего события для раздела архива.",
+      "description_en": "A past sample event for the archive section.",
+      "status": "published",
+      "image_url": "/images/stock/library.jpg"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "d3e00000-0000-4000-8000-000000000201",
+      "image_url": "/images/stock/library.jpg",
+      "caption_ru": "Книжные полки — стоковое фото",
+      "caption_en": "Bookshelves — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000202",
+      "image_url": "/images/stock/lounge.jpg",
+      "caption_ru": "Атмосфера барного зала — стоковое фото",
+      "caption_en": "Bar atmosphere — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000203",
+      "image_url": "/images/stock/cocktails.jpg",
+      "caption_ru": "Коктейли и вечерние разговоры — стоковое фото",
+      "caption_en": "Cocktails and conversation — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000204",
+      "image_url": "/images/stock/coffee.jpg",
+      "caption_ru": "Кофе и неспешное чтение — стоковое фото",
+      "caption_en": "Coffee and unhurried reading — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000205",
+      "image_url": "/images/stock/salad.jpg",
+      "caption_ru": "Сезонные блюда — стоковое фото",
+      "caption_en": "Seasonal dishes — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000206",
+      "image_url": "/images/stock/pasta.jpg",
+      "caption_ru": "Ужин за разговором — стоковое фото",
+      "caption_en": "Dinner and conversation — stock photograph"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000207",
+      "image_url": "/images/stock/dessert.jpg",
+      "caption_ru": "Десерт к любимой книге — стоковое фото",
+      "caption_en": "Dessert with a favourite book — stock photograph"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "d3e00000-0000-4000-8000-000000000301",
+      "author": "Демо · Айжан",
+      "rating": 5,
+      "text_ru": "Демонстрационный отзыв: уютное место для чтения и разговора, понравился чай книжного клуба.",
+      "text_en": "Sample review: a cosy place to read and chat. I enjoyed the book club tea.",
+      "status": "published"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000302",
+      "author": "Демо · Тимур",
+      "rating": 4,
+      "text_ru": "Демонстрационный отзыв: приятная атмосфера и вкусная паста. Вернулся бы на джазовый вечер.",
+      "text_en": "Sample review: a lovely atmosphere and tasty pasta. I would return for a jazz evening.",
+      "status": "published"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000303",
+      "author": "Демо · Алина",
+      "rating": 5,
+      "text_ru": "Демонстрационный отзыв: шоколадный десерт прекрасно дополняет вечер с книгой.",
+      "text_en": "Sample review: the chocolate dessert is a lovely companion for an evening with a book.",
+      "status": "published"
+    },
+    {
+      "id": "d3e00000-0000-4000-8000-000000000304",
+      "author": "Демо · На модерации",
+      "rating": 4,
+      "text_ru": "Тестовый отзыв для проверки модерации. До публикации посетители его не увидят.",
+      "text_en": "A sample moderation review. Visitors cannot see it until it is published.",
+      "status": "moderation"
+    }
+  ]
+}
