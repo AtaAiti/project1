@@ -302,6 +302,8 @@
     "loading": "Загружаем страницу…",
     "all": "Всё меню",
     "categories": "Категории меню",
+    "expandCategories": "Показать категории",
+    "collapseCategories": "Свернуть категории",
     "items": "Позиций",
     "strength": "Крепость",
     "portion": "Порция",
