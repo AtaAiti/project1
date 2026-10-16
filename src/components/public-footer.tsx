@@ -19,9 +19,6 @@ export function PublicFooter({ locale }: { locale: string }) {
             {t.nav[key]}
           </Link>
         ))}
-        <Link className="mt-2 text-[var(--gold)]" href="/admin/login">
-          {t.publicUi.adminLogin}
-        </Link>
       </nav>
       <div className="space-y-3 text-sm">
         <p>{t.publicUi.address}</p>

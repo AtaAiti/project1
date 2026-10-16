@@ -2,8 +2,8 @@
 
 import Link from "@/components/feedback-link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import type { Locale } from "@/lib/dictionaries";
 import { PublicFooter } from "@/components/public-footer";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -11,10 +11,20 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 type Dictionary = ReturnType<typeof import("@/lib/dictionaries").getDictionary>;
 const navigation = ["about", "afisha", "menu", "contacts"] as const;
 
-export function Logo({ locale, tagline }: { locale: Locale; tagline: string }) {
+export function Logo({
+  locale,
+  tagline,
+  onClick,
+}: {
+  locale: Locale;
+  tagline: string;
+  onClick: (event: MouseEvent<HTMLAnchorElement>) => void;
+}) {
   return (
     <Link
       href={`/${locale}`}
+      data-brand-logo
+      onClick={onClick}
       className="block shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--gold)]"
     >
       <Image
@@ -41,6 +51,33 @@ export function SiteShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const logoTaps = useRef({ count: 0, last: 0 });
+  useEffect(() => {
+    const reset = (event: PointerEvent) => {
+      if (
+        !(event.target instanceof Element) ||
+        !event.target.closest("[data-brand-logo]")
+      ) {
+        logoTaps.current = { count: 0, last: 0 };
+      }
+    };
+    document.addEventListener("pointerdown", reset);
+    return () => document.removeEventListener("pointerdown", reset);
+  }, []);
+  function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const now = event.timeStamp;
+    const count =
+      now - logoTaps.current.last <= 1200 ? logoTaps.current.count + 1 : 1;
+    logoTaps.current = { count, last: now };
+    if (count === 7) {
+      event.preventDefault();
+      logoTaps.current = { count: 0, last: 0 };
+      setMenuOpen(false);
+      router.push("/admin/login");
+    }
+  }
   const activeSection = pathname.split("/")[2] || "";
   const [menuOpen, setMenuOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
@@ -82,7 +119,7 @@ export function SiteShell({
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <header className="sticky top-0 z-30 flex min-h-24 items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 px-6 py-2 backdrop-blur md:px-12">
-        <Logo locale={locale} tagline={dictionary.tagline} />
+        <Logo locale={locale} tagline={dictionary.tagline} onClick={handleLogoClick} />
         <nav
           className="hidden items-center gap-5 lg:flex"
           aria-label={t.navigation}
@@ -102,12 +139,6 @@ export function SiteShell({
             className="text-xs font-bold text-[var(--gold)]"
           >
             {other.toUpperCase()}
-          </Link>
-          <Link
-            href="/admin/login"
-            className="rounded border border-[var(--gold)] px-3 py-2 text-xs text-[var(--gold)]"
-          >
-            {t.adminLogin}
           </Link>
           <Link href={bookingPath} className="btn-gold">
             {t.reserve}
@@ -135,7 +166,7 @@ export function SiteShell({
       >
         <div>
           <div className="flex items-center justify-between">
-            <Logo locale={locale} tagline={dictionary.tagline} />
+            <Logo locale={locale} tagline={dictionary.tagline} onClick={handleLogoClick} />
             <button
               onClick={() => {
                 setMenuOpen(false);
@@ -165,13 +196,6 @@ export function SiteShell({
               className="mt-6 inline-block text-[var(--gold)]"
             >
               {other.toUpperCase()}
-            </Link>
-            <Link
-              href="/admin/login"
-              onClick={() => setMenuOpen(false)}
-              className="mt-6 block text-[var(--gold)]"
-            >
-              {t.adminLogin}
             </Link>
           </nav>
         </div>

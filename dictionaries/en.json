@@ -302,6 +302,8 @@
     "loading": "Loading page…",
     "all": "Full menu",
     "categories": "Menu categories",
+    "expandCategories": "Show categories",
+    "collapseCategories": "Collapse categories",
     "items": "Items",
     "strength": "ABV",
     "portion": "Serving",
