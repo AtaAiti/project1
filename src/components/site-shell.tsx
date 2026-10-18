@@ -2,6 +2,7 @@
 
 import Link from "@/components/feedback-link";
 import Image from "next/image";
+import { CookieBanner } from "@/components/cookie-consent";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import type { Locale } from "@/lib/dictionaries";
@@ -9,7 +10,7 @@ import { PublicFooter } from "@/components/public-footer";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
 type Dictionary = ReturnType<typeof import("@/lib/dictionaries").getDictionary>;
-const navigation = ["about", "afisha", "menu", "contacts"] as const;
+const navigation = ["about", "afisha", "menu", "tables", "contacts"] as const;
 
 export function Logo({
   locale,
@@ -158,6 +159,7 @@ export function SiteShell({
       <Breadcrumbs locale={locale} />
       {children}
       <PublicFooter locale={locale} />
+      <CookieBanner locale={locale} />
       <div
         ref={menu}
         id="visitor-menu"

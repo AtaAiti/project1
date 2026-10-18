@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { normalizePhone } from "@/lib/phone";
+import { findVenueTable } from "@/lib/venue-tables";
 
 export const VENUE_TIME_ZONE = "Asia/Bishkek";
 const requiredText = z
@@ -46,7 +47,11 @@ export const bookingSchema = z.strictObject({
   guests: guestsSchema,
   comment: description.default(""),
   website: z.string().max(1000).optional(),
-});
+  table_id: z.string().refine((id) => Boolean(findVenueTable(id)), "validation.table").optional(),
+}).refine((booking) => {
+  const table = findVenueTable(booking.table_id);
+  return !table || booking.guests <= table.seats;
+}, { message: "validation.tableCapacity", path: ["table_id"] });
 
 export const rsvpSchema = z.strictObject({
   event_id: z.uuid({ error: "validation.invalid" }),

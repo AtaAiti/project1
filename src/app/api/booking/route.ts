@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyHoneypot } from "@/lib/honeypot";
 import { sendTelegram } from "@/lib/server/telegram";
 import { getDictionary } from "@/lib/dictionaries";
+import { findVenueTable } from "@/lib/venue-tables";
 
 export const runtime = "nodejs";
 
@@ -34,7 +35,14 @@ export async function POST(request: Request) {
     const { allowed } = await rateLimit(rateLimitKey(request, "booking"), 5, 600);
     if (!allowed) return errorResponse("error.rateLimited", 429);
 
-    const { name, phone, date, time, guests, comment } = validation.data;
+    const { name, phone, date, time, guests, table_id } = validation.data;
+    const table = findVenueTable(table_id);
+    const labels = getDictionary("ru").tables;
+    // Keep the requested table in the existing, admin-visible booking comment.
+    // This is a seating preference, not an inventory hold or confirmed reservation.
+    const comment = table
+      ? `${labels.requestLabel} ${table.id} (${labels.capacityLabel}: ${table.seats}, ${labels.zones[table.zone]})\n${validation.data.comment}`.trim()
+      : validation.data.comment;
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("bookings")

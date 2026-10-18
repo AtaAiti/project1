@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ConsentProvider } from "@/components/cookie-consent";
 import { RecoveryRedirect } from "@/components/recovery-redirect";
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ru">
-      <body><RecoveryRedirect />{children}</body>
+      <body><ConsentProvider><RecoveryRedirect />{children}</ConsentProvider></body>
     </html>
   );
 }

@@ -65,6 +65,9 @@ export default async function EventPage({ params }: Props) {
             · Asia/Bishkek
           </p>
           <EventBadges event={event} locale={locale} />
+          <a href={`/api/events/${event.id}/calendar?locale=${locale}`} className="btn-outline-gold mt-5 inline-block">
+            {d.calendar.add}
+          </a>
           <p className="mt-6 whitespace-pre-line text-[var(--text-secondary)]">
             {locale === "en" ? event.description_en : event.description_ru}
           </p>

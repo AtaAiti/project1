@@ -5,7 +5,8 @@
     "menu": "Menu",
     "afisha": "Events",
     "contacts": "Contacts",
-    "styleguide": "Styleguide"
+    "styleguide": "Styleguide",
+    "tables": "Tables"
   },
   "tagline": "A meeting place between the lines",
   "hero": {
@@ -50,7 +51,9 @@
     "error.emailRateLimited": "Too many email requests. Please wait and try again later.",
     "error.emailDelivery": "The email could not be sent. Try again later or contact the site owner.",
     "validation.email": "Enter a valid email address.",
-    "validation.rating": "Choose a rating from 1 to 5."
+    "validation.rating": "Choose a rating from 1 to 5.",
+    "validation.table": "Choose a table from the floor plan.",
+    "validation.tableCapacity": "Your group exceeds the selected table’s capacity. Choose a larger table or book without a table preference."
   },
   "booking": {
     "eyebrow": "Contact / reservations",
@@ -343,5 +346,58 @@
     "ownerNote": "The owner keeps access regardless of this list.",
     "ownerAlready": "The owner already has permanent access.",
     "inviteAgain": "Resend invitation"
+  },
+  "cookies": {
+    "title": "Cookies and privacy settings",
+    "description": "We save your age confirmation and preferences in your browser. Essential cookies are used for administrator sign-in. The external OpenStreetMap map loads only with your consent: the service receives your IP address and browser information. We currently use no analytics or advertising cookies.",
+    "storage": "Your choice is saved on this device. You can change it using “Cookie settings” at the bottom of the site.",
+    "necessary": "Essential only",
+    "allowMap": "Allow map",
+    "settings": "Cookie settings"
+  },
+  "map": {
+    "title": "Bishkek on the map",
+    "demo": "The venue address is currently a demonstration address. This map shows central Bishkek, not the exact location of the bar.",
+    "consent": "Allow a connection to OpenStreetMap to display the interactive map.",
+    "load": "Allow and show map",
+    "open": "Open map in a new tab"
+  },
+  "calendar": {
+    "add": "Add to calendar",
+    "location": "Bishkek, Kyrgyzstan — exact address to be confirmed",
+    "descriptionNote": "The event time is for Bishkek. Please check the end time and exact address with the organiser.",
+    "unavailable": "The calendar is temporarily unavailable. Please try again later."
+  },
+  "tables": {
+    "title": "Choose your table",
+    "eyebrow": "Literary reservation",
+    "intro": "Read by the window, sit near the bar or gather with friends — choose a table on the plan and continue to your booking request.",
+    "plan": "Floor plan: choose a table",
+    "table": "Table",
+    "seats": "Capacity",
+    "guestsShort": "Seats",
+    "windows": "Windows",
+    "library": "Bookshelves",
+    "aisle": "Aisle",
+    "entrance": "Entrance",
+    "bar": "Bar",
+    "zones": {
+      "window": "By the window",
+      "library": "By the bookshelves",
+      "hall": "In the main room",
+      "bar": "Near the bar"
+    },
+    "demo": "Demonstration floor plan. Table locations and numbers will be updated for the actual venue.",
+    "selection": "Your place",
+    "choose": "Select a table",
+    "confirmation": "This is a seating preference. An administrator will check availability for your requested time and confirm the table.",
+    "continue": "Confirm selection and continue",
+    "hint": "Select a table on the plan to see its capacity and location.",
+    "anyTable": "Book without a table preference",
+    "selected": "Selected table",
+    "change": "Choose another table",
+    "invalid": "This table was not found. Choose a table on the plan or book without a preference.",
+    "requestLabel": "Requested table",
+    "capacityLabel": "seats"
   }
 }

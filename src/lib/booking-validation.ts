@@ -10,6 +10,7 @@ export type BookingPayload = {
   guests: number;
   comment: string;
   website?: string;
+  table_id?: string;
 };
 
 type ValidationResult =

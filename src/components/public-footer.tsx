@@ -1,3 +1,4 @@
+import { CookieSettings } from "@/components/cookie-consent";
 import Link from "@/components/feedback-link";
 import { getDictionary } from "@/lib/dictionaries";
 
@@ -14,11 +15,12 @@ export function PublicFooter({ locale }: { locale: string }) {
         aria-label={t.publicUi.navigation}
         className="grid content-start gap-3 text-sm"
       >
-        {(["about", "menu", "afisha", "contacts"] as const).map((key) => (
+        {(["about", "menu", "afisha", "tables", "contacts"] as const).map((key) => (
           <Link href={`/${locale}/${key}`} key={key}>
             {t.nav[key]}
           </Link>
         ))}
+        <CookieSettings locale={locale} />
       </nav>
       <div className="space-y-3 text-sm">
         <p>{t.publicUi.address}</p>
