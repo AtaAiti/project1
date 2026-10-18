@@ -1,6 +1,7 @@
 import Link from "@/components/feedback-link";
 import { EventBadges } from "@/components/event-badges";
 import { notFound } from "next/navigation";
+import { ContactMap } from "@/components/contact-map";
 import { BookingForm } from "@/components/booking-form";
 import { MenuCatalog } from "@/components/menu-catalog";
 import { ReviewForm } from "@/components/review-form";
@@ -142,13 +143,7 @@ export default async function SectionPage({
             >
               {t.whatsapp}
             </a>
-            <div className="relative mt-8 aspect-[4/3] overflow-hidden rounded">
-              <ContentImage
-                src={stockImage("lounge")}
-                alt={t.stockNote}
-                sizes="(max-width:1024px) 100vw, 50vw"
-              />
-            </div>
+            <ContactMap locale={locale} />
           </div>
           <BookingForm locale={locale} />
         </div>

@@ -75,3 +75,25 @@ describe("API error keys have translations in both languages", () => {
     expect(mocks.insert).not.toHaveBeenCalled();
   });
 });
+
+it("persists the trusted table preference and includes it in Telegram", async () => {
+  const response = await POST(request({ ...valid, table_id: "T1", comment: "By the window, please" }));
+  expect(response.status).toBe(200);
+  expect(mocks.insert).toHaveBeenCalledWith(expect.objectContaining({
+    comment: expect.stringContaining("T1 (мест: 2"), status: "pending",
+  }));
+  expect(mocks.insert.mock.calls[0][0].comment).toContain("By the window, please");
+  expect(mocks.insert.mock.calls[0][0]).not.toHaveProperty("table_id");
+  expect(mocks.sendTelegram.mock.calls[0][0]).toContain("T1 (мест: 2");
+});
+it.each([
+  [{ ...valid, table_id: "unknown" }, "validation.table"],
+  [{ ...valid, table_id: "T1", guests: 3 }, "validation.tableCapacity"],
+])("rejects invalid table requests before saving", async (body, key) => {
+  const response = await POST(request(body));
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ errorKey: key });
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.sendTelegram).not.toHaveBeenCalled();
+  for (const dictionary of [ru, en]) expect(dictionary.errors[key as keyof typeof dictionary.errors]).toBeTruthy();
+});
