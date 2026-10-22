@@ -204,3 +204,15 @@ it("returns failure when the DB transaction fails rather than acknowledging it",
   ).rejects.toThrow();
   expect(mocks.drain).not.toHaveBeenCalled();
 });
+
+it("links directly to the localized booking form and contacts WhatsApp", async () => {
+  await handleBotUpdate(client(), settings, message("/book"));
+  expect(JSON.stringify(rpc.mock.calls[0][1].p_replies)).toContain(
+    "/booking?locale=ru",
+  );
+  rpc.mockClear();
+  await handleBotUpdate(client(), settings, message("/contacts"));
+  expect(JSON.stringify(rpc.mock.calls[0][1].p_replies)).toContain(
+    "https://wa.me/996779118824",
+  );
+});

@@ -74,7 +74,7 @@ export async function handleBotUpdate(
           ],
           [
             { text: t.events, url: `${botSiteUrl()}/${locale}/afisha` },
-            { text: t.book, url: `${botSiteUrl()}/${locale}/contacts#booking` },
+            { text: t.book, url: `${botSiteUrl()}/booking?locale=${locale}` },
           ],
           [
             { text: t.site, url: `${botSiteUrl()}/${locale}` },
@@ -345,6 +345,17 @@ export async function handleBotUpdate(
         replies = {
           normal: reply(
             `${d.publicUi.address}\n${d.publicUi.addressNote}\n${d.publicUi.phone}\n${d.publicUi.hours}`,
+            {
+              inline_keyboard: [
+                [
+                  {
+                    text: d.publicUi.whatsapp,
+                    url: `https://wa.me/${d.publicUi.phone.replace(/\D/g, "")}`,
+                  },
+                ],
+                ...links.inline_keyboard,
+              ],
+            },
           ),
         };
       else if (name === "admin")
