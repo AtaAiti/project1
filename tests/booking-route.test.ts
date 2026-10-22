@@ -13,6 +13,8 @@ const request = (body: unknown) => new Request("http://localhost/api/booking", {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-10-22T12:00:00Z"));
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://test.supabase.co");
   vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "test-key");
   mocks.rateLimit.mockResolvedValue({ allowed: true });
@@ -20,7 +22,7 @@ beforeEach(() => {
   mocks.single.mockResolvedValue({ data: { id: "test-id" }, error: null });
   mocks.insert.mockReturnValue({ select: () => ({ single: mocks.single }) });
 });
-afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
+afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
 it("honeypot returns fake success without rate limit, database or Telegram", async () => {
   const response = await POST(request({ website: "spam" }));
@@ -93,6 +95,22 @@ it.each([
   const response = await POST(request(body));
   expect(response.status).toBe(400);
   expect(await response.json()).toEqual({ errorKey: key });
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.sendTelegram).not.toHaveBeenCalled();
+  for (const dictionary of [ru, en]) expect(dictionary.errors[key as keyof typeof dictionary.errors]).toBeTruthy();
+});
+
+
+it.each([
+  [{ ...valid, date: "2026-10-21" }, "validation.bookingPast"],
+  [{ ...valid, date: "2026-10-22", time: "17:59" }, "validation.bookingPast"],
+  [{ ...valid, time: "09:59" }, "validation.bookingHours"],
+  [{ ...valid, time: "22:00" }, "validation.bookingHours"],
+])("rejects invalid booking times at the API before any write", async (body, key) => {
+  const response = await POST(request(body));
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ errorKey: key });
+  expect(mocks.rateLimit).not.toHaveBeenCalled();
   expect(mocks.insert).not.toHaveBeenCalled();
   expect(mocks.sendTelegram).not.toHaveBeenCalled();
   for (const dictionary of [ru, en]) expect(dictionary.errors[key as keyof typeof dictionary.errors]).toBeTruthy();

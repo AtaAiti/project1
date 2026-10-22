@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "@/components/feedback-link";
 import { getDictionary } from "@/lib/dictionaries";
+import { useBookingDraft } from "@/components/booking-draft";
 import { VENUE_TABLES, findVenueTable } from "@/lib/venue-tables";
 
-export function TablePicker({ locale }: { locale: string }) {
+export function TablePicker({ locale, initialTableId }: { locale: string; initialTableId?: string }) {
   const t = getDictionary(locale).tables;
-  const [selected, setSelected] = useState("");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const { selectedTable, selectTable } = useBookingDraft();
+  const [selected, setSelected] = useState(initialTableId || selectedTable);
   const table = findVenueTable(selected);
   return (
-    <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <div className={`mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] ${table ? "pb-24 lg:pb-0" : ""}`}>
       <div className="card p-3 sm:p-6">
         <div role="group" aria-label={t.plan} className="relative h-[450px] rounded-lg border-2 border-[var(--gold-border)] bg-[var(--bg-secondary)] sm:h-[500px]">
           <span className="absolute inset-x-8 top-4 border-t-4 border-[var(--gold-border)] pt-2 text-center text-xs text-[var(--text-secondary)]">{t.windows}</span>
@@ -22,7 +30,7 @@ export function TablePicker({ locale }: { locale: string }) {
               type="button"
               aria-pressed={item.id === selected}
               aria-label={`${t.table} ${item.id}, ${t.seats}: ${item.seats}, ${t.zones[item.zone]}`}
-              onClick={() => setSelected(item.id)}
+              onClick={() => { setSelected(item.id); selectTable(item.id); }}
               style={{ left: `${item.x}%`, top: `${item.y}%` }}
               className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 px-2 py-3 text-center shadow-[0_5px_0_var(--border)] ${item.id === selected ? "border-[var(--gold)] bg-[var(--gold)] text-[#210c14]" : "border-[var(--gold-border)] bg-[var(--bg-card)] hover:border-[var(--gold)]"} w-[68px] sm:w-24`}
             >
@@ -45,8 +53,12 @@ export function TablePicker({ locale }: { locale: string }) {
         {table ? (
           <Link href={`/booking?locale=${locale}&table=${table.id}`} className="btn-gold mt-6 block text-center">{t.continue}</Link>
         ) : <p className="mt-6 rounded border border-[var(--border)] p-4 text-sm">{t.hint}</p>}
-        <Link href={`/booking?locale=${locale}`} className="mt-5 block py-2 text-sm text-[var(--gold)] underline underline-offset-4">{t.anyTable}</Link>
+        <Link href={`/booking?locale=${locale}`} onClick={() => selectTable("")} className="mt-5 block py-2 text-sm text-[var(--gold)] underline underline-offset-4">{t.anyTable}</Link>
       </section>
+      {table && mounted && createPortal(<div className="fixed inset-x-3 z-30 flex items-center justify-between gap-3 rounded-xl border border-[var(--gold-border)] bg-[var(--bg-card)] p-3 shadow-2xl lg:hidden" style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+        <p aria-live="polite" className="text-sm"><strong>{t.table} {table.id}</strong><span className="mt-1 block text-xs text-[var(--text-secondary)]">{t.seats}: {table.seats}</span></p>
+        <Link href={`/booking?locale=${locale}&table=${table.id}`} className="btn-gold text-center">{t.continueShort}</Link>
+      </div>, document.body)}
     </div>
   );
 }

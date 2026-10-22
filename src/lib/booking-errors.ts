@@ -4,6 +4,8 @@ export const BOOKING_ERROR_KEYS = [
   "validation.guests",
   "validation.date",
   "validation.time",
+  "validation.bookingPast",
+  "validation.bookingHours",
   "validation.invalid",
   "validation.table",
   "validation.tableCapacity",
