@@ -4,6 +4,7 @@ import { validateBookingInput } from "@/lib/booking-validation";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyHoneypot } from "@/lib/honeypot";
+import { bookingActions } from "@/lib/telegram-bot";
 import { sendTelegram } from "@/lib/server/telegram";
 import { getDictionary } from "@/lib/dictionaries";
 import { findVenueTable } from "@/lib/venue-tables";
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
     if (error) throw new Error(`Booking insert failed: ${error.message}`);
 
     const notification = getDictionary("ru").telegram;
-    await sendTelegram(`${notification.newBooking} ${data.id}\n${name}, ${phone}\n${date} ${time} (${notification.timeZone}), ${notification.guests}: ${guests}\n${comment}`);
+    await sendTelegram(`${notification.newBooking} ${data.id}\n${name}, ${phone}\n${date} ${time} (${notification.timeZone}), ${notification.guests}: ${guests}\n${comment}`, bookingActions(data.id, "ru"));
 
     return NextResponse.json({ ok: true, id: data.id });
   } catch (error) {
