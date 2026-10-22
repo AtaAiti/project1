@@ -49,8 +49,8 @@ export function useConsent() {
 }
 
 export function CookieSettings({ locale }: { locale: string }) {
-  const { openSettings } = useConsent();
-  return <button type="button" onClick={openSettings} className="min-h-11 text-left text-sm text-[var(--text-secondary)] underline underline-offset-4">{getDictionary(locale).cookies.settings}</button>;
+  const { openSettings, ready } = useConsent();
+  return <button type="button" disabled={!ready} onClick={openSettings} className="min-h-11 text-left text-sm text-[var(--text-secondary)] underline underline-offset-4">{getDictionary(locale).cookies.settings}</button>;
 }
 
 export function CookieBanner({ locale }: { locale: string }) {
@@ -60,8 +60,15 @@ export function CookieBanner({ locale }: { locale: string }) {
   return (
     <section lang={locale} role="region" aria-label={t.title} className="fixed inset-x-3 bottom-3 z-[45] mx-auto max-h-[70dvh] max-w-4xl overflow-y-auto rounded-xl border border-[var(--gold-border)] bg-[var(--bg-card)] p-5 shadow-2xl md:p-6">
       <h2 className="display text-xl">{t.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{t.description}</p>
-      <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">{t.storage}</p>
+      <details className="mt-2 md:hidden">
+        <summary className="min-h-11 cursor-pointer py-3 text-sm text-[var(--gold)] underline underline-offset-4">{t.details}</summary>
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">{t.description}</p>
+        <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">{t.storage}</p>
+      </details>
+      <div className="hidden md:block">
+        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{t.description}</p>
+        <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">{t.storage}</p>
+      </div>
       <div className="mt-4 flex flex-wrap gap-3">
         <button type="button" className="btn-outline-gold" onClick={() => choose(false)}>{t.necessary}</button>
         <button type="button" className="btn-gold" onClick={() => choose(true)}>{t.allowMap}</button>

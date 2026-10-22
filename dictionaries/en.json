@@ -53,7 +53,9 @@
     "validation.email": "Enter a valid email address.",
     "validation.rating": "Choose a rating from 1 to 5.",
     "validation.table": "Choose a table from the floor plan.",
-    "validation.tableCapacity": "Your group exceeds the selected table’s capacity. Choose a larger table or book without a table preference."
+    "validation.tableCapacity": "Your group exceeds the selected table’s capacity. Choose a larger table or book without a table preference.",
+    "validation.bookingPast": "Choose a future date and time in Bishkek.",
+    "validation.bookingHours": "Bookings are available from 10:00 to 22:00 Bishkek time. Choose a time before closing."
   },
   "booking": {
     "eyebrow": "Contact / reservations",
@@ -75,7 +77,8 @@
     "successText": "Your request has been saved. Please wait for confirmation from the administrator.",
     "home": "Home",
     "back": "Back",
-    "honeypot": "Website"
+    "honeypot": "Website",
+    "hoursHint": "Daily 10:00–22:00, Bishkek time. Your booking must start before closing."
   },
   "auth": {
     "eyebrow": "Site management",
@@ -353,7 +356,8 @@
     "storage": "Your choice is saved on this device. You can change it using “Cookie settings” at the bottom of the site.",
     "necessary": "Essential only",
     "allowMap": "Allow map",
-    "settings": "Cookie settings"
+    "settings": "Cookie settings",
+    "details": "More details"
   },
   "map": {
     "title": "Bishkek on the map",
@@ -398,6 +402,9 @@
     "change": "Choose another table",
     "invalid": "This table was not found. Choose a table on the plan or book without a preference.",
     "requestLabel": "Requested table",
-    "capacityLabel": "seats"
+    "capacityLabel": "seats",
+    "remove": "Remove table preference",
+    "continueShort": "Continue",
+    "chooseTable": "Choose a table on the plan"
   }
 }
