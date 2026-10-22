@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { MenuItem } from "@/lib/content";
 import { MENU_CATEGORIES, menuImage } from "@/lib/menu-presentation";
 import { getDictionary } from "@/lib/dictionaries";
-import { ContentImage } from "@/components/content-image";
+import { MenuPhoto } from "@/components/menu-photo";
 import { MenuDetails } from "@/components/menu-details";
 export function MenuCatalog({
   items,
@@ -114,7 +114,9 @@ export function MenuCatalog({
               .map((item) => (
                 <article className="card overflow-hidden" key={item.id}>
                   <div className="relative aspect-[4/3]">
-                    <ContentImage
+                    <MenuPhoto
+                      category={item.category}
+                      locale={locale}
                       src={menuImage(item)}
                       alt={locale === "en" ? item.name_en : item.name_ru}
                     />

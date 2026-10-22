@@ -10,11 +10,13 @@ export default function MenuPage() {
       addLabel={t.addItem}
       titleField="name_ru"
       detailField="composition_ru"
+      imageField="image_url"
       search
       defaults={{
         category: t.defaultCategory,
         name_ru: "",
         name_en: "",
+        image_url: "",
         composition_ru: "",
         composition_en: "",
         strength: "",
@@ -38,6 +40,7 @@ export default function MenuPage() {
         },
         { key: "name_ru", label: t.nameRu, required: true },
         { key: "name_en", label: t.nameEn, required: true },
+        { key: "image_url", label: getDictionary("ru").menuPhotos.field, type: "image", required: true },
         { key: "composition_ru", label: t.compositionRu, type: "textarea" },
         { key: "composition_en", label: t.compositionEn, type: "textarea" },
         { key: "strength", label: t.strength },

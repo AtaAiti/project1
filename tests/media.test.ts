@@ -24,3 +24,14 @@ it("generates a safe unique path without overwriting existing objects", async ()
   expect(result.path).toMatch(/^books\/[0-9a-f-]{36}\.png$/);
   expect(upload).toHaveBeenCalledWith(result.path, expect.any(Uint8Array), { contentType: "image/png", upsert: false });
 });
+
+it("supports the menu folder with UUID names and blocks oversized files", async () => {
+  const { client, upload } = storageClient();
+  const bytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+  const result = await uploadMedia(client, new File([bytes], "dish.png", { type: "image/png" }), "menu");
+  expect(result.path).toMatch(/^menu\/[0-9a-f-]{36}\.png$/);
+  expect(upload).toHaveBeenCalledOnce();
+  const oversized = new File([new Uint8Array(4 * 1024 * 1024 + 1)], "large.png", { type: "image/png" });
+  expect(await uploadMedia(client, oversized, "menu")).toEqual({ errorKey: "validation.file" });
+  expect(upload).toHaveBeenCalledOnce();
+});

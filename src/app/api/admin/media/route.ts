@@ -8,9 +8,9 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const auth = await authorizeAdmin();
   if (auth.status !== 200) return apiError(auth.status === 401 ? "error.unauthorized" : "error.forbidden", auth.status);
-  // Bound uploads before materializing multipart data, including multipart overhead.
+  // Keep the 4 MiB file plus multipart overhead below the Vercel function body limit.
   const length = Number(request.headers.get("content-length"));
-  if (!Number.isSafeInteger(length) || length <= 0 || length > 6 * 1024 * 1024) return apiError("validation.file", 413);
+  if (!Number.isSafeInteger(length) || length <= 0 || length > 4 * 1024 * 1024 + 64 * 1024) return apiError("validation.file", 413);
   try {
     const data = await request.formData();
     if ([...data.keys()].some((key) => !["file", "folder"].includes(key)) || data.getAll("file").length !== 1 || data.getAll("folder").length !== 1) return apiError("validation.invalid", 400);

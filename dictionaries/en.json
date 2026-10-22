@@ -36,7 +36,7 @@
     "validation.date": "Enter a valid calendar date.",
     "validation.time": "Enter a valid time.",
     "validation.invalid": "Check the form: a value is invalid or contains unknown fields.",
-    "validation.file": "Upload a JPEG, PNG or WebP image no larger than 5 MB.",
+    "validation.file": "Upload a JPEG, PNG or WebP image no larger than 4 MB.",
     "error.unauthorized": "Sign in to your administrator account.",
     "error.forbidden": "This account does not have permission to manage the site.",
     "error.notFound": "Section not found.",
@@ -406,5 +406,18 @@
     "remove": "Remove table preference",
     "continueShort": "Continue",
     "chooseTable": "Choose a table on the plan"
+  },
+  "menuPhotos": {
+    "field": "Item photo",
+    "preview": "Item photo preview",
+    "required": "Add an item photo before saving.",
+    "choose": "Add photo",
+    "replace": "Replace photo",
+    "uploading": "Uploading photo…",
+    "formats": "JPEG, PNG or WebP, up to 4 MB. Click Save after uploading.",
+    "useLink": "Or use a photo link",
+    "url": "HTTPS link",
+    "placeholder": "This is a category illustration. Upload a photo of the actual dish or drink.",
+    "illustration": "Illustrative photo"
   }
 }
