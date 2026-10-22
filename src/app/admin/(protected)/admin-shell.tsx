@@ -15,6 +15,7 @@ const items = [
   ["/admin/gallery", t.gallery],
   ["/admin/reviews", t.reviews],
   ["/admin/bookings", x.bookings],
+  ["/admin/telegram", d.telegramAdmin.title],
 ] as const;
 
 export default function AdminShell({

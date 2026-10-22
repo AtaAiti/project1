@@ -142,6 +142,7 @@ export const adminListQuerySchema = z.strictObject({
 });
 export const adminBookingStatusSchema = z.strictObject({
   id: z.uuid(),
+  expected_status: z.enum(["pending", "confirmed", "declined"]).optional(),
   status: z.enum(["pending", "confirmed", "declined"]),
 });
 export const reviewSubmissionSchema = z.strictObject({
