@@ -177,8 +177,38 @@ async function main() {
     }),
   });
   if (!smoke.ok) throw new Error(`Webhook smoke HTTP ${smoke.status}`);
+  const privateCheck = await fetch(url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-telegram-bot-api-secret-token": secret,
+    },
+    body: JSON.stringify({
+      update_id: id + 1,
+      message: {
+        message_id: 1,
+        from: { id: chat.id, is_bot: false, language_code: "ru" },
+        chat: { id: chat.id, type: "private" },
+        text: "/pending",
+      },
+    }),
+  });
+  if (!privateCheck.ok)
+    throw new Error(`Private command smoke HTTP ${privateCheck.status}`);
+  const deliveries = await db(
+    `rest/v1/telegram_outbox?bot_id=eq.${me.id}&update_id=eq.${id + 1}&select=job,delivered_at,dead_at`,
+  );
+  if (
+    deliveries.length !== 1 ||
+    deliveries[0].job.admin_user_id !== owner.id ||
+    !deliveries[0].delivered_at ||
+    deliveries[0].dead_at
+  )
+    throw new Error(
+      "Owner private-command access or delivery was not verified",
+    );
   console.log(
-    "Webhook registered; unsigned request rejected; signed /help delivered to owner. Pending updates:",
+    "Webhook registered; unsigned request rejected; signed /help and authorized /pending delivered to owner. Pending updates:",
     info.pending_update_count,
   );
   const ru = JSON.parse(
