@@ -220,3 +220,26 @@ update public.menu_items m set portion_ru=v.ru, portion_en=v.en from (values
  ('d3e00000-0000-4000-8000-000000000008'::uuid,'500 мл','500 ml')
 ) v(id,ru,en) where m.id=v.id and m.portion_ru='' and m.portion_en='';
 commit;
+-- Per-item menu photographs. Safe to repeat; existing custom photographs are preserved.
+begin;
+alter table public.menu_items add column if not exists image_url text not null default '';
+
+-- Existing positions keep a clearly labelled category illustration until an admin replaces it.
+update public.menu_items
+set image_url = case
+  when category = 'Десерты' then '/images/stock/dessert.jpg'
+  when category = 'Горячее' then '/images/stock/pasta.jpg'
+  when category in ('Закуски', 'Салаты') then '/images/stock/salad.jpg'
+  when category in ('Кофе', 'Чай', 'Безалкогольные') then '/images/stock/coffee.jpg'
+  else '/images/stock/cocktails.jpg'
+end
+where image_url = '';
+
+alter table public.menu_items drop constraint if exists menu_items_image_url_check;
+alter table public.menu_items add constraint menu_items_image_url_check check (
+  image_url = '' or image_url ~ '^https://' or
+  image_url ~ '^/images/stock/(dessert|pasta|salad|coffee|cocktails)\.jpg$'
+);
+-- Existing RLS and service-role-only writes remain unchanged.
+notify pgrst, 'reload schema';
+commit;
