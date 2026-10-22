@@ -13,7 +13,7 @@ export {
   demoReviews,
 } from "@/lib/demo-content";
 
-export type MenuItem = (typeof demoMenu)[number] & { created_at?: string };
+export type MenuItem = (typeof demoMenu)[number] & { created_at?: string; image_url?: string };
 export type EventItem = (typeof demoEvents)[number] & { created_at?: string };
 export type GalleryPhoto = (typeof demoGallery)[number] & {
   created_at?: string;

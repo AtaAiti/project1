@@ -74,6 +74,10 @@ export const resourceSchemas = {
     category: requiredText,
     name_ru: requiredText,
     name_en: requiredText,
+    image_url: z.union([
+      z.url().max(2048).refine((value) => value.startsWith("https://"), "validation.file"),
+      z.string().regex(/^\/images\/stock\/(dessert|pasta|salad|coffee|cocktails)\.jpg$/, "validation.file"),
+    ]),
     composition_ru: description.default(""),
     composition_en: description.default(""),
     strength: optionalText.default(""),
@@ -189,11 +193,11 @@ export function adminEditorPayload(
 }
 
 export const mediaMetadataSchema = z.strictObject({
-  folder: z.enum(["gallery", "books"]),
+  folder: z.enum(["gallery", "books", "menu"]),
   type: z.enum(["image/jpeg", "image/png", "image/webp"]),
   size: z
     .number()
     .int()
     .positive()
-    .max(5 * 1024 * 1024),
+    .max(4 * 1024 * 1024),
 });

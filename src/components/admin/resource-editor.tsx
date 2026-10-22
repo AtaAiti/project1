@@ -6,6 +6,8 @@ import { ContentImage } from "@/components/content-image";
 import { isDemoRecord } from "@/lib/demo-content";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/image-upload";
+import { menuImage } from "@/lib/menu-presentation";
 import { LoadingCards } from "@/components/loading-cards";
 
 type Row = Record<string, string | number | boolean | null> & { id: string };
@@ -20,7 +22,8 @@ type Field = {
     | "time"
     | "url"
     | "checkbox"
-    | "select";
+    | "select"
+    | "image";
   required?: boolean;
   min?: number;
   max?: number;
@@ -58,6 +61,7 @@ export function ResourceEditor({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [query, setQuery] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -90,7 +94,8 @@ export function ResourceEditor({
 
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    if (!editing || saving) return;
+    if (!editing || saving || uploading) return;
+    if (fields.some((field) => field.type === "image" && field.required && !editing[field.key])) { setError(d.menuPhotos.required); return; }
     setSaving(true);
     setError("");
     const payload = Object.fromEntries(
@@ -197,10 +202,10 @@ export function ResourceEditor({
           <div className="grid gap-4 xl:grid-cols-2">
             {shown.map((row) => (
               <article key={row.id} className="card overflow-hidden">
-                {imageField && row[imageField] && (
+                {imageField && (row[imageField] || resource === "menu_items") && (
                   <div className="relative aspect-[16/9]">
                     <ContentImage
-                      src={String(row[imageField])}
+                      src={resource === "menu_items" ? menuImage({ category: String(row.category), image_url: String(row[imageField] || "") }) : String(row[imageField])}
                       alt={String(row[titleField] || title)}
                       sizes="(max-width: 1280px) 100vw, 40vw"
                     />
@@ -254,7 +259,7 @@ export function ResourceEditor({
                       className="text-sm text-[var(--gold)]"
                       onClick={() => {
                         setError("");
-                        setEditing(row);
+                        setEditing(resource === "menu_items" && imageField ? { ...row, [imageField]: String(row[imageField] || menuImage({ category: String(row.category) })) } : row);
                       }}
                     >
                       {d.admin.edit}
@@ -272,21 +277,21 @@ export function ResourceEditor({
       <dialog
         ref={dialog}
         onCancel={(event) => {
-          if (saving) event.preventDefault();
+          if (saving || uploading) event.preventDefault();
           else setEditing(null);
         }}
         onClose={() => setEditing(null)}
         className="fixed max-h-[90vh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto border border-[var(--border)] bg-[var(--bg-primary)] p-6 text-[var(--text-primary)]"
       >
         {editing && (
-          <form onSubmit={save}>
+          <form onSubmit={save} aria-busy={saving || uploading}>
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="display text-2xl">
                 {editing.id ? d.admin.editing : addLabel}
               </h2>
               <button
                 type="button"
-                disabled={saving}
+                disabled={saving || uploading}
                 onClick={() => setEditing(null)}
                 aria-label={d.admin.close}
               >
@@ -294,7 +299,16 @@ export function ResourceEditor({
               </button>
             </div>
             <div className="grid gap-4">
-              {fields.map((field) => (
+              {fields.map((field) => field.type === "image" ? (
+                <ImageUpload
+                  key={field.key}
+                  label={field.label}
+                  value={String(editing[field.key] || "")}
+                  disabled={saving}
+                  onBusyChange={setUploading}
+                  onChange={(url) => setEditing((current) => current ? { ...current, [field.key]: url } : current)}
+                />
+              ) : (
                 <label key={field.key} className="block text-sm">
                   {field.label}
                   {field.type === "checkbox" ? (
@@ -379,12 +393,12 @@ export function ResourceEditor({
               </p>
             )}
             <div className="mt-6 flex gap-4">
-              <button className="btn-gold" disabled={saving}>
+              <button className="btn-gold" disabled={saving || uploading}>
                 {saving ? t.saving : d.admin.save}
               </button>
               <button
                 type="button"
-                disabled={saving}
+                disabled={saving || uploading}
                 onClick={() => setEditing(null)}
               >
                 {t.cancel}

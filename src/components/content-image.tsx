@@ -6,12 +6,14 @@ export function ContentImage({
   sizes = "(max-width: 768px) 100vw, 33vw",
   preload = false,
   className = "",
+  onError,
 }: {
   src: string;
   alt: string;
   sizes?: string;
   preload?: boolean;
   className?: string;
+  onError?: () => void;
 }) {
   const host = process.env.NEXT_PUBLIC_SUPABASE_URL
     ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
@@ -27,6 +29,7 @@ export function ContentImage({
       sizes={sizes}
       preload={preload}
       unoptimized={!optimized}
+      onError={onError}
       className={`object-cover ${className}`}
     />
   );

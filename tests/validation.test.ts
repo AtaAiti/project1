@@ -41,7 +41,7 @@ describe("strict request schemas", () => {
     expect(adminEditorPayload("events", { id: "id", title_ru: "Title", created_at: "now", unexpected: true })).toEqual({ id: "id", title_ru: "Title" });
   });
   it("accepts complete resource bodies and rejects invalid resource-specific values", () => {
-    expect(resourceSchemas.menu_items.safeParse({ category: "Коктейли", name_ru: "Тест", name_en: "Test", price: 100 }).success).toBe(true);
+    expect(resourceSchemas.menu_items.safeParse({ category: "Коктейли", name_ru: "Тест", name_en: "Test", price: 100, image_url: "https://example.com/dish.jpg" }).success).toBe(true);
     expect(resourceSchemas.events.safeParse({ date: "2026-11-01", time: "19:30:00", title_ru: "Тест", title_en: "Test" }).success).toBe(true);
     expect(resourceSchemas.gallery_photos.safeParse({ image_url: "https://example.com/photo.png" }).success).toBe(true);
     expect(resourceSchemas.reviews.safeParse({ author: "Test", rating: 5, text_ru: "Тест" }).success).toBe(true);
