@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import RobotsTxt from "lighthouse/core/gather/gatherers/seo/robots-txt.js";
 /**
  * CDP Network.loadNetworkResource bypasses the browser's HTTPS route bridge.
@@ -21,4 +22,11 @@ export default class VerifiedProxyRobots extends RobotsTxt {
       };
     }
   }
+}
+
+export function proxyLighthouseConfig() {
+  return {
+    extends: "lighthouse:default",
+    artifacts: [{ id: "RobotsTxt", gatherer: fileURLToPath(import.meta.url) }],
+  };
 }

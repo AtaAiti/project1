@@ -1,5 +1,8 @@
 import { afterEach, expect, it, vi } from "vitest";
-import VerifiedProxyRobots from "../scripts/lighthouse-robots-proxy.mjs";
+import { initializeConfig } from "lighthouse/core/config/config.js";
+import VerifiedProxyRobots, {
+  proxyLighthouseConfig,
+} from "../scripts/lighthouse-robots-proxy.mjs";
 const context = {
   baseArtifacts: {
     URL: { finalDisplayedUrl: "https://literator-xi.vercel.app/en/menu" },
@@ -35,5 +38,32 @@ it("reports transport failure rather than inventing valid robots rules", async (
     status: null,
     content: null,
     errorMessage: expect.any(String),
+  });
+});
+
+it("initializes the stock Lighthouse config with only the verified robots transport replaced", async () => {
+  const flags = { onlyCategories: ["seo"] };
+  const original = (await initializeConfig("navigation", undefined, flags))
+    .resolvedConfig;
+  const custom = (
+    await initializeConfig("navigation", proxyLighthouseConfig(), flags)
+  ).resolvedConfig;
+  expect(custom.categories).toEqual(original.categories);
+  expect(custom.settings).toEqual(original.settings);
+  const artifact = custom.artifacts.find((a) => a.id === "RobotsTxt");
+  expect(artifact.gatherer.path).toBe(
+    proxyLighthouseConfig().artifacts[0].gatherer,
+  );
+  vi.stubGlobal(
+    "fetch",
+    vi
+      .fn()
+      .mockResolvedValue(
+        new Response("User-Agent: *\nDisallow: /admin", { status: 200 }),
+      ),
+  );
+  expect(await artifact.gatherer.instance.getArtifact(context)).toEqual({
+    status: 200,
+    content: "User-Agent: *\nDisallow: /admin",
   });
 });

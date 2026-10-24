@@ -1,7 +1,7 @@
 /** Mobile lab audits against a running local build or production origin. */
 import { chromium } from "playwright";
 import lighthouse from "lighthouse";
-import VerifiedProxyRobots from "./lighthouse-robots-proxy.mjs";
+import { proxyLighthouseConfig } from "./lighthouse-robots-proxy.mjs";
 import { mkdir, writeFile } from "node:fs/promises";
 const origin = process.argv[2] || "http://127.0.0.1:3095",
   out = process.env.QA_REPORT_DIR || "/tmp/project1-qa/lighthouse";
@@ -48,12 +48,7 @@ if (process.env.QA_HTTPS_BRIDGE)
     },
   );
 const config = process.env.QA_HTTPS_BRIDGE
-  ? {
-      extends: "lighthouse:default",
-      artifacts: [
-        { id: "RobotsTxt", gatherer: { implementation: VerifiedProxyRobots } },
-      ],
-    }
+  ? proxyLighthouseConfig()
   : undefined;
 const summary = {
   date: new Date().toISOString(),
