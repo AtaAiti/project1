@@ -1,6 +1,7 @@
 /** Mobile lab audits against a running local build or production origin. */
 import { chromium } from "playwright";
 import lighthouse from "lighthouse";
+import VerifiedProxyRobots from "./lighthouse-robots-proxy.mjs";
 import { mkdir, writeFile } from "node:fs/promises";
 const origin = process.argv[2] || "http://127.0.0.1:3095",
   out = process.env.QA_REPORT_DIR || "/tmp/project1-qa/lighthouse";
@@ -17,32 +18,43 @@ const browser = await chromium.launch({
 const connection = await chromium.connectOverCDP("http://127.0.0.1:9227"),
   context = connection.contexts()[0];
 if (process.env.QA_HTTPS_BRIDGE)
-  await context.route("https://**", async (route) => {
-    try {
-      const req = route.request(),
-        body = req.postDataBuffer();
-      const r = await fetch(req.url(), {
-        method: req.method(),
-        headers: await req.allHeaders(),
-        ...(body ? { body } : {}),
-        redirect: "manual",
-      });
-      const headers = Object.fromEntries(r.headers);
-      for (const key of [
-        "content-encoding",
-        "content-length",
-        "transfer-encoding",
-      ])
-        delete headers[key];
-      await route.fulfill({
-        status: r.status,
-        headers,
-        body: Buffer.from(await r.arrayBuffer()),
-      });
-    } catch {
-      await route.abort("failed");
+  await context.route(
+    (url) => url.protocol === "https:",
+    async (route) => {
+      try {
+        const req = route.request(),
+          body = req.postDataBuffer();
+        const r = await fetch(req.url(), {
+          method: req.method(),
+          headers: await req.allHeaders(),
+          ...(body ? { body } : {}),
+          redirect: "manual",
+        });
+        const headers = Object.fromEntries(r.headers);
+        for (const key of [
+          "content-encoding",
+          "content-length",
+          "transfer-encoding",
+        ])
+          delete headers[key];
+        await route.fulfill({
+          status: r.status,
+          headers,
+          body: Buffer.from(await r.arrayBuffer()),
+        });
+      } catch {
+        await route.abort("failed");
+      }
+    },
+  );
+const config = process.env.QA_HTTPS_BRIDGE
+  ? {
+      extends: "lighthouse:default",
+      artifacts: [
+        { id: "RobotsTxt", gatherer: { implementation: VerifiedProxyRobots } },
+      ],
     }
-  });
+  : undefined;
 const summary = {
   date: new Date().toISOString(),
   origin,
@@ -50,22 +62,29 @@ const summary = {
   profile:
     "Lighthouse mobile defaults; simulated throttling; fresh visitor storage",
   httpsBridge: Boolean(process.env.QA_HTTPS_BRIDGE),
+  robotsTransport: process.env.QA_HTTPS_BRIDGE
+    ? "real robots.txt fetched through verified Node HTTPS proxy; stock audit unchanged"
+    : "stock CDP fetch",
   pages: [],
 };
 try {
   for (const path of paths) {
     const label = path.replace(/[^a-z0-9]/gi, "-"),
-      result = await lighthouse(new URL(path, origin).href, {
-        port: 9227,
-        onlyCategories: [
-          "performance",
-          "accessibility",
-          "best-practices",
-          "seo",
-        ],
-        output: ["json", "html"],
-        logLevel: "error",
-      });
+      result = await lighthouse(
+        new URL(path, origin).href,
+        {
+          port: 9227,
+          onlyCategories: [
+            "performance",
+            "accessibility",
+            "best-practices",
+            "seo",
+          ],
+          output: ["json", "html"],
+          logLevel: "error",
+        },
+        config,
+      );
     if (!result || result.lhr.runtimeError)
       throw new Error(`Lighthouse failed on ${path}`);
     await writeFile(`${out}/${label}.json`, result.report[0]);
