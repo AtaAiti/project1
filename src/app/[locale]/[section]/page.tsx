@@ -1,3 +1,4 @@
+import { localizedMetadata } from "@/lib/site-seo";
 import Link from "@/components/feedback-link";
 import { EventBadges } from "@/components/event-badges";
 import { notFound } from "next/navigation";
@@ -21,6 +22,18 @@ import { Gallery } from "@/components/gallery";
 import { DemoNotice } from "@/components/demo-notice";
 
 const sections = ["about", "menu", "afisha", "contacts"];
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/[section]">) {
+  const { locale, section } = await params;
+  if (!sections.includes(section))
+    return { robots: { index: false, follow: false } };
+  return localizedMetadata(
+    locale === "en" ? "en" : "ru",
+    section as "about" | "menu" | "afisha" | "contacts",
+  );
+}
+
 export default async function SectionPage({
   params,
 }: PageProps<"/[locale]/[section]">) {

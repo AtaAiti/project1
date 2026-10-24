@@ -1,10 +1,22 @@
+import { routeLocale } from "@/lib/site-seo";
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { hasAdminIdentityConfig } from "@/lib/admin-identity";
 import { isAllowedAdminUser } from "@/lib/server/admin-access";
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(
+    "x-site-locale",
+    routeLocale(
+      request.nextUrl.pathname,
+      request.nextUrl.searchParams.get("locale"),
+    ),
+  );
+  const next = () =>
+    NextResponse.next({ request: { headers: requestHeaders } });
+  let response = next();
+  if (!request.nextUrl.pathname.startsWith("/admin")) return response;
   if (
     ["/admin/login", "/admin/reset-password"].includes(request.nextUrl.pathname)
   )
@@ -34,7 +46,8 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({ request });
+          requestHeaders.set("cookie", request.headers.get("cookie") || "");
+          response = next();
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
@@ -50,4 +63,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   return response;
 }
-export const config = { matcher: ["/admin/:path*"] };
+export const config = {
+  matcher: ["/admin/:path*", "/ru/:path*", "/en/:path*", "/booking"],
+};

@@ -1,7 +1,10 @@
 "use client";
+import { trapDialogTab } from "@/lib/dialog-focus";
 
 import Link from "@/components/feedback-link";
 import Image from "next/image";
+import { AgeGate } from "@/components/age-gate";
+import { DocumentLanguage } from "@/components/document-language";
 import { CookieBanner } from "@/components/cookie-consent";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
@@ -67,7 +70,9 @@ export function SiteShell({
     return () => document.removeEventListener("pointerdown", reset);
   }, []);
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
+    setMenuOpen(false);
     const now = event.timeStamp;
     const count =
       now - logoTaps.current.last <= 1200 ? logoTaps.current.count + 1 : 1;
@@ -81,46 +86,50 @@ export function SiteShell({
   }
   const activeSection = pathname.split("/")[2] || "";
   const [menuOpen, setMenuOpen] = useState(false);
-  const [gateOpen, setGateOpen] = useState(false);
-  const menu = useRef<HTMLDivElement>(null);
+  const menu = useRef<HTMLDialogElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const other = locale === "ru" ? "en" : "ru";
   const languagePath = pathname.replace(/^\/(ru|en)(?=\/|$)/, `/${other}`);
   const t = dictionary.publicUi;
   const bookingPath = `/booking?locale=${locale}`;
   useEffect(() => {
-    const frame = requestAnimationFrame(() =>
-      setGateOpen(localStorage.getItem("age-confirmed") !== "true"),
-    );
-    return () => cancelAnimationFrame(frame);
-  }, []);
-  useEffect(() => {
-    document.body.style.overflow = menuOpen || gateOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen, gateOpen]);
-  useEffect(() => {
-    if (!menuOpen) return;
-    menu.current?.querySelector<HTMLAnchorElement>("a")?.focus();
-    function key(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        menuButton.current?.focus();
-      }
+    const node = menu.current;
+    if (!menuOpen) {
+      node?.close();
+      return;
     }
-    document.addEventListener("keydown", key);
-    return () => document.removeEventListener("keydown", key);
+    node?.showModal();
+    node?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const resize = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener("change", resize);
+    return () => {
+      node?.close();
+      document.body.style.overflow = previous;
+      desktop.removeEventListener("change", resize);
+    };
   }, [menuOpen]);
   const links = navigation.map((key) => [key, dictionary.nav[key]] as const);
-  const confirmAge = () => {
-    localStorage.setItem("age-confirmed", "true");
-    setGateOpen(false);
-  };
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
+      <DocumentLanguage locale={locale} />
+      <a
+        data-skip-content
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-[var(--gold)] focus:px-5 focus:py-3 focus:text-[var(--bg-primary)]"
+      >
+        {t.skipToContent}
+      </a>
       <header className="sticky top-0 z-30 flex min-h-24 items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 px-6 py-2 backdrop-blur md:px-12">
-        <Logo locale={locale} tagline={dictionary.tagline} onClick={handleLogoClick} />
+        <Logo
+          locale={locale}
+          tagline={dictionary.tagline}
+          onClick={handleLogoClick}
+        />
         <nav
           className="hidden items-center gap-5 lg:flex"
           aria-label={t.navigation}
@@ -137,7 +146,7 @@ export function SiteShell({
           ))}
           <Link
             href={languagePath}
-            className="text-xs font-bold text-[var(--gold)]"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs font-bold text-[var(--gold)]"
           >
             {other.toUpperCase()}
           </Link>
@@ -157,18 +166,29 @@ export function SiteShell({
         </button>
       </header>
       <Breadcrumbs locale={locale} />
-      {children}
+      <div id="main-content" tabIndex={-1}>
+        {children}
+      </div>
       <PublicFooter locale={locale} />
       <CookieBanner locale={locale} />
-      <div
+      <dialog
+        onKeyDown={trapDialogTab}
         ref={menu}
         id="visitor-menu"
-        inert={!menuOpen}
-        className={`fixed inset-0 z-40 flex flex-col justify-between overflow-y-auto bg-[var(--bg-primary)] px-6 py-7 transition-transform lg:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+        aria-label={t.navigation}
+        onCancel={() => setMenuOpen(false)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setMenuOpen(false);
+        }}
+        className={`fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col justify-between overflow-y-auto border-0 bg-[var(--bg-primary)] px-6 py-7 text-[var(--text-primary)] ${menuOpen ? "flex" : "hidden"}`}
       >
         <div>
           <div className="flex items-center justify-between">
-            <Logo locale={locale} tagline={dictionary.tagline} onClick={handleLogoClick} />
+            <Logo
+              locale={locale}
+              tagline={dictionary.tagline}
+              onClick={handleLogoClick}
+            />
             <button
               onClick={() => {
                 setMenuOpen(false);
@@ -208,41 +228,8 @@ export function SiteShell({
         >
           {t.reserve}
         </Link>
-      </div>
-      {gateOpen && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/90 p-4">
-          <div className="w-full max-w-xs rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-6 pb-7 pt-10 text-center">
-            <p className="display text-3xl font-bold">ЛИТЕРАТОРЪ</p>
-            <p className="mt-3 text-[10px] uppercase tracking-[.2em] text-[var(--gold)]">
-              Место встречи между строк
-            </p>
-            <div className="mx-auto mt-3 h-px w-16 bg-[var(--gold)]" />
-            <h2 className="display mt-7 text-2xl">
-              Вам уже исполнилось 18 лет?
-            </h2>
-            <p className="mt-2 font-serif text-[var(--gold)]">
-              Are you 18 or older?
-            </p>
-            <p className="mt-3 text-xs leading-5 text-[var(--text-secondary)]">
-              Сайт содержит информацию о барной карте. Подтвердите
-              совершеннолетие, чтобы продолжить.
-            </p>
-            <div className="mt-7 grid gap-3">
-              <button onClick={confirmAge} className="btn-gold">
-                Да / Yes, I am 18+
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = "https://www.google.com";
-                }}
-                className="btn-outline-gold"
-              >
-                Нет / No, under 18
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </dialog>
+      <AgeGate locale={locale} />
     </div>
   );
 }

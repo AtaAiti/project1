@@ -1,6 +1,7 @@
 "use client";
+import { trapDialogTab } from "@/lib/dialog-focus";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ContentImage } from "@/components/content-image";
 import { getDictionary } from "@/lib/dictionaries";
 import type { GalleryPhoto } from "@/lib/content";
@@ -15,6 +16,7 @@ export function Gallery({
   const t = getDictionary(locale).publicUi;
   const [selected, setSelected] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  const id = useId();
   useEffect(() => {
     if (selected !== null) dialog.current?.showModal();
     else dialog.current?.close();
@@ -32,7 +34,7 @@ export function Gallery({
   }, [selected, photos.length]);
   if (!photos.length) return <p className="card p-8">{t.emptyGallery}</p>;
   const caption = (photo: GalleryPhoto) =>
-    locale === "en" ? photo.caption_en : photo.caption_ru;
+    (locale === "en" ? photo.caption_en : photo.caption_ru) || t.gallery;
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -51,7 +53,10 @@ export function Gallery({
         ))}
       </div>
       <dialog
+        onKeyDown={trapDialogTab}
         ref={dialog}
+        aria-label={t.gallery}
+        aria-describedby={id}
         onCancel={() => setSelected(null)}
         onClose={() => setSelected(null)}
         className="w-[calc(100%-2rem)] max-w-5xl border border-[var(--border)] bg-[var(--bg-primary)] p-4 text-[var(--text-primary)]"
@@ -77,13 +82,17 @@ export function Gallery({
                 onClick={() =>
                   setSelected((selected - 1 + photos.length) % photos.length)
                 }
+                className="grid min-h-11 min-w-11 place-items-center"
                 aria-label={t.previousPhoto}
               >
                 ←
               </button>
-              <p className="text-sm">{caption(photos[selected])}</p>
+              <p id={id} className="text-sm">
+                {caption(photos[selected])}
+              </p>
               <button
                 onClick={() => setSelected((selected + 1) % photos.length)}
+                className="grid min-h-11 min-w-11 place-items-center"
                 aria-label={t.nextPhoto}
               >
                 →
