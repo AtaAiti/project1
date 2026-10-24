@@ -1,0 +1,936 @@
+{
+  "date": "2026-10-24T15:09:54.042Z",
+  "origin": "https://literator-xi.vercel.app",
+  "chrome": "151.0.7922.34",
+  "profile": "Lighthouse mobile defaults; simulated throttling; fresh visitor storage",
+  "httpsBridge": false,
+  "nativeBrowserProxy": true,
+  "robotsTransport": "stock CDP fetch",
+  "pages": [
+    {
+      "path": "/ru",
+      "scores": {
+        "performance": 96,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1125.185,
+        "lcp": 1994.185,
+        "cls": 0,
+        "tbt": 118
+      },
+      "failures": [
+        {
+          "id": "speed-index",
+          "title": "Speed Index",
+          "displayValue": "3.9 s"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "170 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,890 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 27 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "5 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 1,790 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 35 KiB"
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/about",
+      "scores": {
+        "performance": 92,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1100.5027,
+        "lcp": 2889.5027,
+        "cls": 0,
+        "tbt": 191
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.9 s"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "150 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,010 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 910 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/menu",
+      "scores": {
+        "performance": 96,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1089.7894999999999,
+        "lcp": 2702.7895,
+        "cls": 0,
+        "tbt": 78
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.7 s"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 830 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 113 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "5 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 730 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/afisha",
+      "scores": {
+        "performance": 94,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1125.6359,
+        "lcp": 2344.6359,
+        "cls": 0,
+        "tbt": 201.5
+      },
+      "failures": [
+        {
+          "id": "total-blocking-time",
+          "title": "Total Blocking Time",
+          "displayValue": "200 ms"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "190 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,520 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 112 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 1,420 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/contacts",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1085.3274000000001,
+        "lcp": 2720.3274,
+        "cls": 0,
+        "tbt": 127
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.7 s"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/tables",
+      "scores": {
+        "performance": 94,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1031.7598,
+        "lcp": 2199.7598,
+        "cls": 0,
+        "tbt": 241.49999999999977
+      },
+      "failures": [
+        {
+          "id": "total-blocking-time",
+          "title": "Total Blocking Time",
+          "displayValue": "240 ms"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "240 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 27 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/booking?locale=ru",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 927.0483,
+        "lcp": 1757.0483,
+        "cls": 0,
+        "tbt": 184
+      },
+      "failures": [
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "150 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 101 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1018.0843,
+        "lcp": 2344.0843,
+        "cls": 0,
+        "tbt": 168
+      },
+      "failures": [
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "160 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,450 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 27 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 1,350 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 35 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en/about",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1026.2778,
+        "lcp": 2193.2778,
+        "cls": 0,
+        "tbt": 154
+      },
+      "failures": [
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 990 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "5 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 890 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en/menu",
+      "scores": {
+        "performance": 96,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1045.2353,
+        "lcp": 2758.2353000000003,
+        "cls": 0,
+        "tbt": 78.00000000000023
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.8 s"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 112 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "5 failure reasons"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en/afisha",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1006.1857,
+        "lcp": 2777.1857,
+        "cls": 0,
+        "tbt": 107
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.8 s"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "150 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,000 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 112 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 900 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en/contacts",
+      "scores": {
+        "performance": 85,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 993.7175,
+        "lcp": 2759.7174999999997,
+        "cls": 0,
+        "tbt": 447.9999999999998
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.8 s"
+        },
+        {
+          "id": "total-blocking-time",
+          "title": "Total Blocking Time",
+          "displayValue": "450 ms"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "390 ms"
+        },
+        {
+          "id": "mainthread-work-breakdown",
+          "title": "Minimize main-thread work",
+          "displayValue": "2.4 s"
+        },
+        {
+          "id": "bootup-time",
+          "title": "Reduce JavaScript execution time",
+          "displayValue": "1.6 s"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests",
+          "displayValue": "Est savings of 60 ms"
+        }
+      ]
+    },
+    {
+      "path": "/en/tables",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 994.7306,
+        "lcp": 2045.7305999999999,
+        "cls": 0,
+        "tbt": 78
+      },
+      "failures": [
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "150 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 26 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests",
+          "displayValue": "Est savings of 50 ms"
+        }
+      ]
+    },
+    {
+      "path": "/booking?locale=en",
+      "scores": {
+        "performance": 98,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 936.1005,
+        "lcp": 1643.1005,
+        "cls": 0,
+        "tbt": 168.5
+      },
+      "failures": [
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "160 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/ru/afisha/d3e00000-0000-4000-8000-000000000101",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 1010.3842,
+        "lcp": 1882.3842,
+        "cls": 0,
+        "tbt": 52.5
+      },
+      "failures": [
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,110 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 1,010 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests"
+        }
+      ]
+    },
+    {
+      "path": "/en/afisha/d3e00000-0000-4000-8000-000000000101",
+      "scores": {
+        "performance": 94,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "fcp": 988.694,
+        "lcp": 2713.694,
+        "cls": 0,
+        "tbt": 153
+      },
+      "failures": [
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "displayValue": "2.7 s"
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "displayValue": "140 ms"
+        },
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "displayValue": "Root document took 1,080 ms"
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "displayValue": "Est savings of 99 KiB"
+        },
+        {
+          "id": "bf-cache",
+          "title": "Page prevented back/forward cache restoration",
+          "displayValue": "4 failure reasons"
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "displayValue": "Est savings of 980 ms"
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "displayValue": "Est savings of 22 KiB"
+        },
+        {
+          "id": "legacy-javascript-insight",
+          "title": "Legacy JavaScript",
+          "displayValue": "Est savings of 14 KiB"
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests",
+          "displayValue": "Est savings of 80 ms"
+        }
+      ]
+    }
+  ],
+  "appCommit": "8009d9d7dac9ba8938188686ca84bf406373fcd0",
+  "profileSettings": {
+    "formFactor": "mobile",
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "screenEmulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    }
+  },
+  "transport": "Native Chrome through the configured proxy, existing trusted CA store, verified TLS; no response interception or modified audits",
+  "browserStorage": "Cleared by Lighthouse per navigation; CDN caches may be warm"
+}

@@ -169,6 +169,9 @@ try {
       const [engine, options] = configs[name];
       browser = await engine.launch({
         headless: true,
+        ...(process.env.QA_BROWSER_PROXY
+          ? { proxy: { server: process.env.QA_BROWSER_PROXY } }
+          : {}),
         timeout: 30000,
         ...options,
       });
@@ -435,8 +438,13 @@ try {
         "/admin/login",
       );
       await redirect.body?.cancel();
-      // Intercepted browser redirects cannot reuse the cloud CA bridge; verify Location above.
-      await login.goto(url("/admin/login"));
+      if (process.env.QA_HTTPS_BRIDGE) {
+        // Intercepted redirects cannot reuse the cloud CA bridge; Location is verified above.
+        await login.goto(url("/admin/login"));
+      } else {
+        await login.goto(url("/admin"));
+        await login.waitForURL("**/admin/login");
+      }
       assert.match(
         await login.locator("meta[name=robots]").getAttribute("content"),
         /noindex/,

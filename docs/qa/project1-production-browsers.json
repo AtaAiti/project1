@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-24T15:14:18.419Z",
+  "origin": "https://literator-xi.vercel.app",
+  "appCommit": "8009d9d7dac9ba8938188686ca84bf406373fcd0",
+  "transport": "Native Chrome, configured proxy, TLS verification enabled; no HTTPS bridge",
+  "browsers": [
+    {
+      "name": "chrome",
+      "version": "151.0.7922.34",
+      "status": "passed",
+      "publicPagesAudited": 14,
+      "axeViolations": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "chrome: localized age gate, keyboard trap and persisted confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: neutral under-18 exit and usable confirmation with blocked storage",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: public routes, SSR metadata, canonical/hreflang and mobile layout",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: mobile menu focus/Escape and language switch preserves page",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: gallery keyboard controls, booking validation, hero anchor and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: desktop switching, admin noindex and access control",
+      "status": "passed"
+    }
+  ],
+  "temporaryAuthAccounts": "removed in finally"
+}

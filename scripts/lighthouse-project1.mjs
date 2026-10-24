@@ -12,6 +12,9 @@ const paths = (
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({
   headless: true,
+  ...(process.env.QA_BROWSER_PROXY
+    ? { proxy: { server: process.env.QA_BROWSER_PROXY } }
+    : {}),
   executablePath: process.env.QA_CHROME_EXECUTABLE || chromium.executablePath(),
   args: ["--remote-debugging-port=9227"],
 });
@@ -57,6 +60,7 @@ const summary = {
   profile:
     "Lighthouse mobile defaults; simulated throttling; fresh visitor storage",
   httpsBridge: Boolean(process.env.QA_HTTPS_BRIDGE),
+  nativeBrowserProxy: Boolean(process.env.QA_BROWSER_PROXY),
   robotsTransport: process.env.QA_HTTPS_BRIDGE
     ? "real robots.txt fetched through verified Node HTTPS proxy; stock audit unchanged"
     : "stock CDP fetch",
