@@ -30,35 +30,50 @@ function pass(name) {
 function url(path) {
   return new URL(path, base).href;
 }
+async function adminApiStatus(cookies = []) {
+  const response = await fetch(url("/api/admin/menu_items"), {
+    headers: cookies.length
+      ? { cookie: cookies.map((c) => `${c.name}=${c.value}`).join("; ") }
+      : {},
+    redirect: "manual",
+    signal: AbortSignal.timeout(15000),
+  });
+  await response.body?.cancel();
+  return response.status;
+}
+
 async function bridge(context) {
   if (!process.env.QA_HTTPS_BRIDGE) return;
   // Use the runtime's verified proxy/CA trust. Never turn off browser TLS verification.
-  await context.route("https://**", async (route) => {
-    try {
-      const req = route.request(),
-        body = req.postDataBuffer();
-      const r = await fetch(req.url(), {
-        method: req.method(),
-        headers: await req.allHeaders(),
-        ...(body ? { body } : {}),
-        redirect: "manual",
-      });
-      const headers = Object.fromEntries(r.headers);
-      for (const key of [
-        "content-encoding",
-        "content-length",
-        "transfer-encoding",
-      ])
-        delete headers[key];
-      await route.fulfill({
-        status: r.status,
-        headers,
-        body: Buffer.from(await r.arrayBuffer()),
-      });
-    } catch {
-      await route.abort("failed");
-    }
-  });
+  await context.route(
+    (url) => url.protocol === "https:",
+    async (route) => {
+      try {
+        const req = route.request(),
+          body = req.postDataBuffer();
+        const r = await fetch(req.url(), {
+          method: req.method(),
+          headers: await req.allHeaders(),
+          ...(body ? { body } : {}),
+          redirect: "manual",
+        });
+        const headers = Object.fromEntries(r.headers);
+        for (const key of [
+          "content-encoding",
+          "content-length",
+          "transfer-encoding",
+        ])
+          delete headers[key];
+        await route.fulfill({
+          status: r.status,
+          headers,
+          body: Buffer.from(await r.arrayBuffer()),
+        });
+      } catch {
+        await route.abort("failed");
+      }
+    },
+  );
 }
 async function prepareAuth() {
   if (!process.argv.includes("--with-auth")) return;
@@ -408,13 +423,20 @@ try {
       });
       const anon = await browser.newContext();
       await bridge(anon);
-      assert.equal(
-        (await anon.request.get(url("/api/admin/menu_items"))).status(),
-        401,
-      );
+      assert.equal(await adminApiStatus(), 401);
       const login = await anon.newPage();
-      await login.goto(url("/admin"));
-      await login.waitForURL("**/admin/login");
+      const redirect = await fetch(url("/admin"), {
+        redirect: "manual",
+        signal: AbortSignal.timeout(15000),
+      });
+      assert.ok([307, 308, 302, 303].includes(redirect.status));
+      assert.equal(
+        new URL(redirect.headers.get("location"), base).pathname,
+        "/admin/login",
+      );
+      await redirect.body?.cancel();
+      // Intercepted browser redirects cannot reuse the cloud CA bridge; verify Location above.
+      await login.goto(url("/admin/login"));
       assert.match(
         await login.locator("meta[name=robots]").getAttribute("content"),
         /noindex/,
@@ -436,10 +458,7 @@ try {
         await denied.addCookies(other);
         const p = await denied.newPage();
         assert.equal((await p.goto(url("/admin"))).status(), 403);
-        assert.equal(
-          (await denied.request.get(url("/api/admin/menu_items"))).status(),
-          403,
-        );
+        assert.equal(await adminApiStatus(other), 403);
         await denied.close();
       }
       pass(name + ": desktop switching, admin noindex and access control");

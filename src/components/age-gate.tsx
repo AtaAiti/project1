@@ -57,6 +57,8 @@ export function AgeGate({ locale }: { locale: Locale }) {
         width={1679}
         height={937}
         sizes="240px"
+        loading="eager"
+        fetchPriority="high"
         className="mx-auto h-auto w-60"
       />
       <p className="mt-3 text-xs uppercase tracking-widest text-[var(--gold)]">

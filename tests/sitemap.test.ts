@@ -1,9 +1,10 @@
-import { beforeEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 const m = vi.hoisted(() => ({ range: vi.fn(), eq: vi.fn(), client: vi.fn() }));
 vi.mock("@supabase/supabase-js", () => ({ createClient: m.client }));
 import sitemap from "@/app/sitemap";
 import { sitemapEvents } from "@/lib/sitemap-events";
 const id = "11111111-1111-4111-8111-111111111111";
+afterEach(() => vi.unstubAllEnvs());
 beforeEach(() => {
   vi.resetAllMocks();
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
