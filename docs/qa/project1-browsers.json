@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-24T14:26:18.814Z",
+  "target": "local production build + live Supabase",
+  "browsers": [
+    {
+      "name": "chrome",
+      "version": "151.0.7922.34",
+      "status": "passed",
+      "publicPagesAudited": 9,
+      "axeViolations": 0
+    },
+    {
+      "name": "edge",
+      "version": "155.0.4283.62",
+      "status": "passed",
+      "publicPagesAudited": 9,
+      "axeViolations": 0
+    },
+    {
+      "name": "firefox",
+      "version": "153.0",
+      "status": "passed",
+      "publicPagesAudited": 9,
+      "axeViolations": 0
+    },
+    {
+      "name": "webkit",
+      "version": "26.5",
+      "status": "passed",
+      "publicPagesAudited": 9,
+      "axeViolations": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "chrome: localized age gate, keyboard trap and persisted confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: neutral under-18 exit and usable confirmation with blocked storage",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: public routes, SSR metadata, canonical/hreflang and mobile layout",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: mobile menu focus/Escape and language switch preserves page",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: gallery keyboard controls, booking validation, hero anchor and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "chrome: desktop switching, admin noindex and access control",
+      "status": "passed"
+    },
+    {
+      "name": "edge: localized age gate, keyboard trap and persisted confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "edge: neutral under-18 exit and usable confirmation with blocked storage",
+      "status": "passed"
+    },
+    {
+      "name": "edge: public routes, SSR metadata, canonical/hreflang and mobile layout",
+      "status": "passed"
+    },
+    {
+      "name": "edge: mobile menu focus/Escape and language switch preserves page",
+      "status": "passed"
+    },
+    {
+      "name": "edge: gallery keyboard controls, booking validation, hero anchor and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "edge: desktop switching, admin noindex and access control",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: localized age gate, keyboard trap and persisted confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: neutral under-18 exit and usable confirmation with blocked storage",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: public routes, SSR metadata, canonical/hreflang and mobile layout",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: mobile menu focus/Escape and language switch preserves page",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: gallery keyboard controls, booking validation, hero anchor and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "firefox: desktop switching, admin noindex and access control",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: localized age gate, keyboard trap and persisted confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: neutral under-18 exit and usable confirmation with blocked storage",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: public routes, SSR metadata, canonical/hreflang and mobile layout",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: mobile menu focus/Escape and language switch preserves page",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: gallery keyboard controls, booking validation, hero anchor and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "webkit: desktop switching, admin noindex and access control",
+      "status": "passed"
+    }
+  ],
+  "temporaryAuthAccounts": "removed in finally",
+  "nativeSafariOnAppleDevice": "not available in Linux cloud; WebKit tested"
+}

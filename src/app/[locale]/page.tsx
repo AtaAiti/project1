@@ -1,3 +1,4 @@
+import { localizedMetadata } from "@/lib/site-seo";
 import Link from "@/components/feedback-link";
 import { MenuDetails } from "@/components/menu-details";
 import { EventBadges } from "@/components/event-badges";
@@ -14,6 +15,11 @@ import { isDemoRecord, stockImage } from "@/lib/demo-content";
 import { MenuPhoto } from "@/components/menu-photo";
 import { ContentImage } from "@/components/content-image";
 import { DemoNotice } from "@/components/demo-notice";
+
+export async function generateMetadata({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
+  return localizedMetadata(locale === "en" ? "en" : "ru", "home");
+}
 
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -52,8 +58,20 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             {t.reserve}
           </Link>
         </div>
+        <a
+          href="#about-literator"
+          className="absolute bottom-5 left-1/2 z-10 flex min-h-11 -translate-x-1/2 items-center gap-3 rounded px-4 text-sm"
+          aria-label={t.scrollDown}
+        >
+          {t.scrollDown}
+          <span aria-hidden="true">↓</span>
+        </a>
       </section>
-      <section className="grid items-center gap-10 bg-[var(--bg-secondary)] px-6 py-20 md:grid-cols-2 md:px-16">
+      <section
+        id="about-literator"
+        tabIndex={-1}
+        className="scroll-mt-28 grid items-center gap-10 bg-[var(--bg-secondary)] px-6 py-20 md:grid-cols-2 md:px-16"
+      >
         <div>
           <p className="section-label">{t.concept}</p>
           <h2 className="display mt-4 text-4xl md:text-5xl">

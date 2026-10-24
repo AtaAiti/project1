@@ -1,3 +1,4 @@
+import { localizedMetadata } from "@/lib/site-seo";
 import Link from "@/components/feedback-link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -11,24 +12,17 @@ type Props = { params: Promise<{ locale: string; id: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
   const event = await getEvent(id);
-  if (!event) return { title: getDictionary(locale).rsvp.notFound };
-  const title = locale === "en" ? event.title_en : event.title_ru,
-    description = locale === "en" ? event.description_en : event.description_ru;
-  return {
-    metadataBase: new URL(
-      process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : "https://literator-xi.vercel.app",
-    ),
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [event.image_url || stockImage("library")],
-    },
-  };
+  if (!event)
+    return {
+      title: getDictionary(locale).rsvp.notFound,
+      robots: { index: false, follow: false },
+    };
+  return localizedMetadata(locale === "en" ? "en" : "ru", "afisha", {
+    title: locale === "en" ? event.title_en : event.title_ru,
+    description: locale === "en" ? event.description_en : event.description_ru,
+    path: (l) => `/${l}/afisha/${id}`,
+    image: event.image_url || stockImage("library"),
+  });
 }
 export default async function EventPage({ params }: Props) {
   const { locale, id } = await params;
@@ -65,7 +59,10 @@ export default async function EventPage({ params }: Props) {
             · Asia/Bishkek
           </p>
           <EventBadges event={event} locale={locale} />
-          <a href={`/api/events/${event.id}/calendar?locale=${locale}`} className="btn-outline-gold mt-5 inline-block">
+          <a
+            href={`/api/events/${event.id}/calendar?locale=${locale}`}
+            className="btn-outline-gold mt-5 inline-block"
+          >
             {d.calendar.add}
           </a>
           <p className="mt-6 whitespace-pre-line text-[var(--text-secondary)]">

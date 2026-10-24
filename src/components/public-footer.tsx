@@ -10,16 +10,22 @@ export function PublicFooter({ locale }: { locale: string }) {
         <p className="display text-3xl">{t.publicUi.brand}</p>
         <p className="mt-3 text-sm text-[var(--text-secondary)]">{t.tagline}</p>
         <p className="mt-4 text-sm">{t.publicUi.footerText}</p>
+        <p className="mt-4 text-xs text-[var(--text-secondary)]">
+          © {new Date().getFullYear()} {t.publicUi.brand}.{" "}
+          {t.publicUi.copyright}
+        </p>
       </div>
       <nav
         aria-label={t.publicUi.navigation}
         className="grid content-start gap-3 text-sm"
       >
-        {(["about", "menu", "afisha", "tables", "contacts"] as const).map((key) => (
-          <Link href={`/${locale}/${key}`} key={key}>
-            {t.nav[key]}
-          </Link>
-        ))}
+        {(["about", "menu", "afisha", "tables", "contacts"] as const).map(
+          (key) => (
+            <Link href={`/${locale}/${key}`} key={key}>
+              {t.nav[key]}
+            </Link>
+          ),
+        )}
         <CookieSettings locale={locale} />
       </nav>
       <div className="space-y-3 text-sm">

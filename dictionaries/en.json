@@ -227,7 +227,10 @@
     "footerText": "Books, food and conversation in one place.",
     "navigation": "Explore",
     "contactLabel": "Contact",
-    "stockCredit": "Photos: Unsplash"
+    "stockCredit": "Photos: Unsplash",
+    "skipToContent": "Skip to content",
+    "scrollDown": "Discover Literator",
+    "copyright": "All rights reserved."
   },
   "adminExtra": {
     "visitorSite": "Go to visitor site",
@@ -483,5 +486,48 @@
     "pendingReplies": "Replies pending delivery",
     "failedReplies": "Undelivered replies",
     "loading": "Checking connection…"
+  },
+  "seo": {
+    "brand": "Literator",
+    "imageAlt": "The atmosphere of Literator bar and reading club",
+    "home": {
+      "title": "Literator — bar and reading club in Bishkek",
+      "description": "A meeting place between the lines: explore the menu, literary events and table booking at Literator. A demonstration venue website in Bishkek."
+    },
+    "about": {
+      "title": "About us and guest reviews | Literator",
+      "description": "Discover Literator: books, food and conversation, interior photographs and guest reviews. Share your own experience."
+    },
+    "menu": {
+      "title": "Food and drinks menu | Literator",
+      "description": "Explore cocktails, coffee, food and desserts at Literator, with photographs, ingredients, alcohol content, serving sizes and prices."
+    },
+    "afisha": {
+      "title": "Events and reading club | Literator",
+      "description": "Upcoming Literator events, reading club meetings and past evenings. Check available seats and register for an event."
+    },
+    "contacts": {
+      "title": "Contact and reservations | Literator",
+      "description": "Contact Literator by phone or WhatsApp and request a table. Open daily 10:00–22:00 Bishkek time. The address is for demonstration purposes."
+    },
+    "tables": {
+      "title": "Choose a table | Literator",
+      "description": "Explore Literator’s demonstration floor plan, choose a table by capacity and request a booking. An administrator confirms availability."
+    },
+    "booking": {
+      "title": "Literary reservation — book a table | Literator",
+      "description": "Request a table at Literator with your preferred date, time, party size and notes. An administrator confirms your booking."
+    },
+    "styleguide": {
+      "title": "Design system | Literator",
+      "description": "Colours, typography and interface components for Literator."
+    }
+  },
+  "ageGate": {
+    "title": "Are you 18 or older?",
+    "description": "This website contains information about alcoholic drinks. Please confirm your age to continue.",
+    "yes": "Yes, I am 18 or older",
+    "no": "No, I am under 18",
+    "storageUnavailable": "Your confirmation lasts until this page is closed because browser storage is unavailable."
   }
 }
