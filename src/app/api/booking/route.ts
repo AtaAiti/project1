@@ -39,18 +39,18 @@ export async function POST(request: Request) {
     const { name, phone, date, time, guests, table_id } = validation.data;
     const table = findVenueTable(table_id);
     const labels = getDictionary("ru").tables;
-    // Keep the requested table in the existing, admin-visible booking comment.
-    // This is a seating preference, not an inventory hold or confirmed reservation.
+    // Keep the table visible in existing administrator cards as well as inventory.
     const comment = table
       ? `${labels.requestLabel} ${table.id} (${labels.capacityLabel}: ${table.seats}, ${labels.zones[table.zone]})\n${validation.data.comment}`.trim()
       : validation.data.comment;
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("bookings")
-      .insert({ name, phone, date, time, guests, comment, status: "pending" })
+      .insert({ name, phone, date, time, guests, comment, table_id: table_id ?? null, status: "pending" })
       .select("id")
       .single();
 
+    if (error?.code === "23P01") return errorResponse("validation.tableUnavailable", 409);
     if (error) throw new Error(`Booking insert failed: ${error.message}`);
 
     const notification = getDictionary("ru").telegram;

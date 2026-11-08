@@ -6,20 +6,34 @@ import Link from "@/components/feedback-link";
 import { getDictionary } from "@/lib/dictionaries";
 import { useBookingDraft } from "@/components/booking-draft";
 import { VENUE_TABLES, findVenueTable } from "@/lib/venue-tables";
+import { VisitPicker } from "@/components/visit-picker";
+import { useTableAvailability } from "@/components/use-table-availability";
 
 export function TablePicker({ locale, initialTableId }: { locale: string; initialTableId?: string }) {
   const t = getDictionary(locale).tables;
+  const v = getDictionary(locale).visit;
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(frame);
   }, []);
-  const { selectedTable, selectTable } = useBookingDraft();
+  const { selectedTable, selectTable, draft, updateDraft } = useBookingDraft();
+  const availability = useTableAvailability(draft.date, draft.time, draft.guests);
   const [selected, setSelected] = useState(initialTableId || selectedTable);
   const table = findVenueTable(selected);
+  const canContinue = table && Number(draft.guests) <= table.seats && availability.status === "ready" && availability.available.includes(table.id);
+  const selectionMessage = table && Number(draft.guests) > table.seats ? getDictionary(locale).errors["validation.tableCapacity"]
+    : availability.status === "ready" ? getDictionary(locale).errors["validation.tableUnavailable"]
+    : availability.status === "loading" ? v.checking : availability.status === "error" ? v.unavailable
+    : availability.status === "demo" ? v.demo : v.chooseTime;
+  const visitUrl = table ? `/booking?${new URLSearchParams({ locale, table: table.id, date: draft.date, time: draft.time, guests: draft.guests })}` : "";
   return (
+    <>
+    <div className="mt-8"><VisitPicker locale={locale} date={draft.date} time={draft.time} guests={draft.guests} onChange={updateDraft} /></div>
     <div className={`mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] ${table ? "pb-24 lg:pb-0" : ""}`}>
       <div className="card p-3 sm:p-6">
+        <p role="status" className="mb-4 text-sm text-[var(--text-secondary)]">{availability.status === "loading" ? v.checking : availability.status === "error" ? v.unavailable : availability.status === "demo" ? v.demo : availability.status === "idle" ? v.chooseTime : availability.available.length ? v.legend : v.noTables}</p>
+        {availability.status === "error" && <button type="button" onClick={availability.retry} className="visit-chip mb-4">{v.retry}</button>}
         <div role="group" aria-label={t.plan} className="relative h-[450px] rounded-lg border-2 border-[var(--gold-border)] bg-[var(--bg-secondary)] sm:h-[500px]">
           <span className="absolute inset-x-8 top-4 border-t-4 border-[var(--gold-border)] pt-2 text-center text-xs text-[var(--text-secondary)]">{t.windows}</span>
           <span className="absolute left-1 top-[41%] text-xs text-[var(--text-secondary)] [writing-mode:vertical-rl]">{t.library}</span>
@@ -29,13 +43,15 @@ export function TablePicker({ locale, initialTableId }: { locale: string; initia
               key={item.id}
               type="button"
               aria-pressed={item.id === selected}
+              disabled={availability.status !== "demo" && (availability.status !== "ready" || !availability.available.includes(item.id)) || Number(draft.guests) > item.seats}
               aria-label={`${t.table} ${item.id}, ${t.seats}: ${item.seats}, ${t.zones[item.zone]}`}
               onClick={() => { setSelected(item.id); selectTable(item.id); }}
               style={{ left: `${item.x}%`, top: `${item.y}%` }}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 px-2 py-3 text-center shadow-[0_5px_0_var(--border)] ${item.id === selected ? "border-[var(--gold)] bg-[var(--gold)] text-[#210c14]" : "border-[var(--gold-border)] bg-[var(--bg-card)] hover:border-[var(--gold)]"} w-[68px] sm:w-24`}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 px-2 py-3 text-center shadow-[0_5px_0_var(--border)] disabled:cursor-not-allowed disabled:opacity-40 ${item.id === selected ? "border-[var(--gold)] bg-[var(--gold)] text-[#210c14]" : "border-[var(--gold-border)] bg-[var(--bg-card)] hover:border-[var(--gold)]"} w-[68px] sm:w-24`}
             >
               <span className="block font-bold">{item.id}</span>
               <span className="mt-1 block text-xs">{t.guestsShort}: {item.seats}</span>
+              <span className="mt-1 block text-[10px]">{Number(draft.guests) > item.seats ? v.capacity : availability.status === "ready" ? availability.available.includes(item.id) ? v.available : v.busy : "—"}</span>
             </button>
           ))}
           <span className="absolute bottom-4 left-5 text-xs text-[var(--text-secondary)]">↑ {t.entrance}</span>
@@ -51,14 +67,15 @@ export function TablePicker({ locale, initialTableId }: { locale: string; initia
         </div>
         <p className="mt-5 text-sm leading-6 text-[var(--text-secondary)]">{t.confirmation}</p>
         {table ? (
-          <Link href={`/booking?locale=${locale}&table=${table.id}`} className="btn-gold mt-6 block text-center">{t.continue}</Link>
+          canContinue ? <Link href={visitUrl} className="btn-gold mt-6 block text-center">{t.continue}</Link> : <p role="status" className="mt-5 text-sm text-[var(--warning)]">{selectionMessage}</p>
         ) : <p className="mt-6 rounded border border-[var(--border)] p-4 text-sm">{t.hint}</p>}
         <Link href={`/booking?locale=${locale}`} onClick={() => selectTable("")} className="mt-5 block py-2 text-sm text-[var(--gold)] underline underline-offset-4">{t.anyTable}</Link>
       </section>
-      {table && mounted && createPortal(<div className="fixed inset-x-3 z-30 flex items-center justify-between gap-3 rounded-xl border border-[var(--gold-border)] bg-[var(--bg-card)] p-3 shadow-2xl lg:hidden" style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+      {table && canContinue && mounted && createPortal(<div className="fixed inset-x-3 z-30 flex items-center justify-between gap-3 rounded-xl border border-[var(--gold-border)] bg-[var(--bg-card)] p-3 shadow-2xl lg:hidden" style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
         <p aria-live="polite" className="text-sm"><strong>{t.table} {table.id}</strong><span className="mt-1 block text-xs text-[var(--text-secondary)]">{t.seats}: {table.seats}</span></p>
-        <Link href={`/booking?locale=${locale}&table=${table.id}`} className="btn-gold text-center">{t.continueShort}</Link>
+        <Link href={visitUrl} className="btn-gold text-center">{t.continueShort}</Link>
       </div>, document.body)}
     </div>
+    </>
   );
 }

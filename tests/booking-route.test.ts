@@ -85,8 +85,15 @@ it("persists the trusted table preference and includes it in Telegram", async ()
     comment: expect.stringContaining("T1 (мест: 2"), status: "pending",
   }));
   expect(mocks.insert.mock.calls[0][0].comment).toContain("By the window, please");
-  expect(mocks.insert.mock.calls[0][0]).not.toHaveProperty("table_id");
+  expect(mocks.insert.mock.calls[0][0]).toHaveProperty("table_id", "T1");
   expect(mocks.sendTelegram.mock.calls[0][0]).toContain("T1 (мест: 2");
+});
+it("returns a conflict when another guest has reserved the same table", async () => {
+  mocks.single.mockResolvedValue({ data: null, error: { code: "23P01", message: "table_unavailable" } });
+  const response = await POST(request({ ...valid, table_id: "T1" }));
+  expect(response.status).toBe(409);
+  expect(await response.json()).toEqual({ errorKey: "validation.tableUnavailable" });
+  expect(mocks.sendTelegram).not.toHaveBeenCalled();
 });
 it.each([
   [{ ...valid, table_id: "unknown" }, "validation.table"],

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { isBookingErrorKey, type BookingErrorKey } from "@/lib/booking-errors";
 import { validateBookingInput, type BookingPayload } from "@/lib/booking-validation";
-import { BOOKING_OPEN_TIME, venueToday } from "@/lib/booking-time";
+import { VisitPicker } from "@/components/visit-picker";
+import { useTableAvailability } from "@/components/use-table-availability";
 import { getDictionary } from "@/lib/dictionaries";
 import Link from "@/components/feedback-link";
 import { useBookingDraft, type BookingDraft } from "@/components/booking-draft";
@@ -22,14 +23,10 @@ export function BookingForm({ locale, onSuccess, expanded = false, tableId }: {
   const id = useId();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [minimumDate, setMinimumDate] = useState("");
+  const availability = useTableAvailability(draft.date, draft.time, draft.guests);
   const [errorKey, setErrorKey] = useState<BookingErrorKey | null>(null);
   const inFlight = useRef(false);
   const errorMessage = useRef<HTMLParagraphElement>(null);
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setMinimumDate(venueToday()));
-    return () => cancelAnimationFrame(frame);
-  }, []);
   function reportError(key: BookingErrorKey) {
     setErrorKey(key);
     requestAnimationFrame(() => errorMessage.current?.focus());
@@ -43,13 +40,14 @@ export function BookingForm({ locale, onSuccess, expanded = false, tableId }: {
     if (inFlight.current) return;
     const validation = validateBookingInput(Object.fromEntries(new FormData(event.currentTarget).entries()));
     if (validation.errorKey) { reportError(validation.errorKey); return; }
+    if (table && availability.status === "ready" && !availability.available.includes(table.id)) { reportError("validation.tableUnavailable"); return; }
     inFlight.current = true;
     setLoading(true);
     setErrorKey(null);
     try {
       const response = await fetch("/api/booking", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(validation.data) });
       const result: { errorKey?: unknown } = await response.json();
-      if (!response.ok) { reportError(isBookingErrorKey(result.errorKey) ? result.errorKey : "error.generic"); return; }
+      if (!response.ok) { if (response.status === 409) availability.retry(); reportError(isBookingErrorKey(result.errorKey) ? result.errorKey : "error.generic"); return; }
       clearDraft();
       if (onSuccess) onSuccess(validation.data);
       else setSent(true);
@@ -75,9 +73,12 @@ export function BookingForm({ locale, onSuccess, expanded = false, tableId }: {
       {!table && <Link href={`/${locale}/tables`} className={"py-2 text-sm text-[var(--gold)] underline underline-offset-4 " + wide}>{dictionary.tables.chooseTable}</Link>}
       <label className={labelClass} htmlFor={id + "-name"}>{t.name}<input disabled={loading} id={id + "-name"} name="name" value={draft.name} onChange={(e) => change("name", e.target.value)} autoComplete="name" maxLength={200} required className="input-field mt-2" placeholder={t.namePlaceholder} /></label>
       <label className={labelClass} htmlFor={id + "-phone"}>{t.phone}<input disabled={loading} id={id + "-phone"} name="phone" value={draft.phone} onChange={(e) => change("phone", e.target.value)} autoComplete="tel" inputMode="tel" required type="tel" className="input-field mt-2" placeholder={t.phonePlaceholder} /></label>
-      <label className={labelClass} htmlFor={id + "-date"}>{t.date}<input disabled={loading} id={id + "-date"} name="date" value={draft.date} onChange={(e) => change("date", e.target.value)} min={minimumDate} required type="date" className="input-field mt-2" /></label>
-      <label className={labelClass} htmlFor={id + "-time"}>{t.time}<input disabled={loading} id={id + "-time"} name="time" value={draft.time} onChange={(e) => change("time", e.target.value)} min={BOOKING_OPEN_TIME} max="21:59" required type="time" className="input-field mt-2" aria-describedby={id + "-hours"} /><span id={id + "-hours"} className="mt-2 block text-xs text-[var(--text-secondary)]">{t.hoursHint}</span></label>
-      <label className={labelClass + " " + wide} htmlFor={id + "-guests"}>{t.guests}<input disabled={loading} id={id + "-guests"} name="guests" value={draft.guests} onChange={(e) => change("guests", e.target.value)} required type="number" min="1" max={table?.seats ?? 20} className="input-field mt-2" placeholder={t.guestsPlaceholder} />{tooManyGuests && <span className="mt-2 block text-sm text-[var(--error)]">{dictionary.errors["validation.tableCapacity"]}</span>}</label>
+      <div className={wide}><VisitPicker locale={locale} date={draft.date} time={draft.time} guests={draft.guests} onChange={(patch) => { updateDraft(patch); setErrorKey(null); }} disabled={loading} maxGuests={table?.seats ?? 20} /></div>
+      {tooManyGuests && <p role="alert" className={wide + " text-sm text-[var(--error)]"}>{dictionary.errors["validation.tableCapacity"]}</p>}
+      {table && <div role="status" className={wide + " text-sm text-[var(--text-secondary)]"}>
+        {availability.status === "loading" ? dictionary.visit.checking : availability.status === "error" ? dictionary.visit.unavailable : availability.status === "ready" ? availability.available.includes(table.id) ? dictionary.visit.available : dictionary.errors["validation.tableUnavailable"] : availability.status === "demo" ? dictionary.visit.demo : dictionary.visit.chooseTime}
+        {availability.status === "error" && <button type="button" onClick={availability.retry} className="visit-chip ml-3">{dictionary.visit.retry}</button>}
+      </div>}
       <label className={labelClass + " " + wide} htmlFor={id + "-comment"}>{t.comment}<textarea disabled={loading} id={id + "-comment"} name="comment" value={draft.comment} onChange={(e) => change("comment", e.target.value)} rows={3} maxLength={5000} className="input-field mt-2 resize-none" placeholder={t.commentPlaceholder} /></label>
       <div aria-hidden="true" className="absolute -left-[10000px]"><label htmlFor={id + "-website"}>{t.honeypot}</label><input id={id + "-website"} name="website" tabIndex={-1} autoComplete="off" /></div>
       {errorKey && <p ref={errorMessage} tabIndex={-1} id={id + "-error"} role="alert" className={"text-sm text-[var(--text-primary)] " + wide}>{dictionary.errors[errorKey]}</p>}

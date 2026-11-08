@@ -2,6 +2,7 @@ import { z } from "zod";
 import { getDictionary, type Locale } from "@/lib/dictionaries";
 import { venueToday } from "@/lib/booking-time";
 import { rateLimit } from "@/lib/rate-limit";
+import { visitorUpdate } from "./visitor";
 import {
   bookingActions,
   botSiteUrl,
@@ -49,7 +50,7 @@ export async function handleBotUpdate(
   if (valid) {
     const session = await client
       .from("telegram_sessions")
-      .select("locale")
+      .select("locale,flow")
       .eq("bot_id", bot)
       .eq("chat_id", chat.id)
       .maybeSingle();
@@ -69,16 +70,16 @@ export async function handleBotUpdate(
       const links = {
         inline_keyboard: [
           [
-            { text: t.menu, url: `${botSiteUrl()}/${locale}/menu` },
-            { text: t.tables, url: `${botSiteUrl()}/${locale}/tables` },
+            { text: t.menu, callback_data: "v:menu" },
+            { text: t.tables, callback_data: "v:tables" },
           ],
           [
-            { text: t.events, url: `${botSiteUrl()}/${locale}/afisha` },
-            { text: t.book, url: `${botSiteUrl()}/booking?locale=${locale}` },
+            { text: t.events, callback_data: "v:events" },
+            { text: t.book, callback_data: "v:book" },
           ],
           [
             { text: t.site, url: `${botSiteUrl()}/${locale}` },
-            { text: t.contacts, url: `${botSiteUrl()}/${locale}/contacts` },
+            { text: t.contacts, callback_data: "v:contacts" },
           ],
           [
             { text: "Русский", callback_data: "lang:ru" },
@@ -116,10 +117,14 @@ export async function handleBotUpdate(
           : [job];
       }
       const cmd = parseBotCommand(message?.text ?? "", settings.username);
-      let name = cmd?.name ?? "unknown",
+      let name = cmd?.name ?? (!cb ? "guestText" : "unknown"),
         arg = cmd?.argument ?? "";
       if (cb) {
-        if (cb.data?.startsWith("lang:")) name = "languageSaved";
+        if (cb.data?.startsWith("v:")) {
+          const parts = cb.data.split(":");
+          name = parts[1]; arg = parts[2] ?? "";
+        }
+        else if (cb.data?.startsWith("lang:")) name = "languageSaved";
         else if (cb.data?.startsWith("b:")) {
           const parts = cb.data.split(":");
           name =
@@ -147,7 +152,9 @@ export async function handleBotUpdate(
         "reject",
         "admin",
       ].includes(name);
-      if (name === "start" && arg.startsWith("link_")) {
+      const visitor = await visitorUpdate({ client, locale, name, arg, data: cb?.data, text: message?.text ?? "", sessionFlow: session.data?.flow, reply });
+      if (visitor) { action = visitor.action; replies = visitor.replies; }
+      else if (name === "start" && arg.startsWith("link_")) {
         if (/^link_[A-Za-z0-9_-]{43}$/.test(arg)) {
           linkHash = hashToken(arg.slice(5));
           const token = await client
@@ -293,16 +300,16 @@ export async function handleBotUpdate(
       } else if (name === "events") {
         const result = await client
           .from("events")
-          .select("id,title_ru,title_en,date,time,capacity")
+          .select("id,title_ru,title_en,description_ru,description_en,date,time,capacity")
           .eq("status", "published")
           .gte("date", venueToday())
           .order("date")
           .order("time")
-          .limit(10);
+          .limit(200);
         if (result.error) throw new Error("Events unavailable");
-        const events = (result.data ?? [])
-          .filter((e) => Date.parse(`${e.date}T${e.time}+06:00`) > Date.now())
-          .slice(0, 5);
+        const offset = /^\d{1,3}$/.test(arg) ? Number(arg) : 0;
+        const upcoming = (result.data ?? []).filter((e) => Date.parse(`${e.date}T${e.time}+06:00`) > Date.now());
+        const events = upcoming.slice(offset, offset + 4);
         const counts = events.length
           ? await client
               .from("event_seats")
@@ -317,17 +324,20 @@ export async function handleBotUpdate(
           events
             .map(
               (e) =>
-                `${e[`title_${locale}`]}\n${e.date} ${e.time.slice(0, 5)} · Asia/Bishkek${e.capacity == null ? "" : `\n${t.seats}: ${Math.max(0, e.capacity - Number(counts.data?.find((s) => s.event_id === e.id)?.seats_taken ?? 0))}`}`,
+                `${telegramText(e[`title_${locale}`], 200)}\n${e.date} ${e.time.slice(0, 5)} · Asia/Bishkek\n${telegramText(e[`description_${locale}`] || "", 450)}${e.capacity == null ? "" : `\n${t.seats}: ${Math.max(0, e.capacity - Number(counts.data?.find((s) => s.event_id === e.id)?.seats_taken ?? 0))}`}`,
             )
             .join("\n\n") || t.noEvents;
         replies = {
           normal: reply(text, {
-            inline_keyboard: events.map((e) => [
+            inline_keyboard: [...events.map((e) => [
               {
                 text: telegramText(e[`title_${locale}`], 70),
                 url: `${botSiteUrl()}/${locale}/afisha/${e.id}`,
               },
-            ]),
+            ]), [
+              ...(offset ? [{ text: t.previous, callback_data: `v:events:${Math.max(0, offset - 4)}` }] : []),
+              ...(upcoming.length > offset + 4 ? [{ text: t.next, callback_data: `v:events:${offset + 4}` }] : []),
+            ], ...links.inline_keyboard].filter((row) => row.length),
           }),
         };
       } else if (name === "language")
@@ -347,6 +357,7 @@ export async function handleBotUpdate(
             `${d.publicUi.address}\n${d.publicUi.addressNote}\n${d.publicUi.phone}\n${d.publicUi.hours}`,
             {
               inline_keyboard: [
+                [{ text: d.visit.map, url: "https://www.openstreetmap.org/#map=13/42.87/74.60" }],
                 [
                   {
                     text: d.publicUi.whatsapp,
@@ -376,9 +387,9 @@ export async function handleBotUpdate(
             `${name === "start" ? t.welcome : name === "help" ? t.help : t.languageSaved}${actor ? `\n\n${t.adminHelp}` : ""}`,
           ),
         };
-      else if (["site", "menu", "tables", "book"].includes(name))
+      else if (name === "site")
         replies = {
-          normal: reply(t[name as "site" | "menu" | "tables" | "book"]),
+          normal: reply(t.site),
         };
       else replies = { normal: reply(t.unknown) };
     }

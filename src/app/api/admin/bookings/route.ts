@@ -46,6 +46,7 @@ export async function PATCH(request: Request) {
     if (result.outcome === "conflict")
       return apiError("error.bookingConflict", 409);
     if (result.outcome === "past") return apiError("error.bookingPast", 409);
+    if (result.outcome === "table_conflict") return apiError("validation.tableUnavailable", 409);
     return NextResponse.json({ data: result.booking });
   } catch {
     return apiError("error.generic", 503);

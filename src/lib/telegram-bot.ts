@@ -62,7 +62,7 @@ export function telegramText(value: string, max = 3900) {
     : value.slice(0, max - 1).replace(/[\uD800-\uDBFF]$/, "") + "…";
 }
 export function parseBotCommand(text: string, username: string) {
-  const match = /^\/([a-z]+)(?:@([a-z0-9_]+))?(?:\s+([\s\S]*))?$/i.exec(
+  const match = /^\/([a-z_]+)(?:@([a-z0-9_]+))?(?:\s+([\s\S]*))?$/i.exec(
     text.trim(),
   );
   if (!match || (match[2] && match[2].toLowerCase() !== username.toLowerCase()))
