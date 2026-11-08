@@ -64,3 +64,9 @@ it("returns unavailable when the transaction fails", async () => {
   mocks.rpc.mockResolvedValue({ data: null, error: { message: "private" } });
   expect((await patch({ id, status: "confirmed" })).status).toBe(503);
 });
+it("explains a table conflict when restoring an overlapping declined booking", async () => {
+  mocks.rpc.mockResolvedValue({ data: null, error: { code: "23P01" } });
+  const response = await patch({ id, status: "confirmed", expected_status: "declined" });
+  expect(response.status).toBe(409);
+  expect((await response.json()).errorKey).toBe("validation.tableUnavailable");
+});

@@ -2,6 +2,7 @@ import { localizedMetadata } from "@/lib/site-seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { findVenueTable } from "@/lib/venue-tables";
 import { TablePicker } from "@/components/table-picker";
+import { RestoreBookingVisit } from "@/components/booking-draft";
 
 export async function generateMetadata({
   params,
@@ -20,6 +21,7 @@ export default async function TablesPage({
   const t = getDictionary(locale).tables;
   return (
     <main lang={locale} className="mx-auto max-w-6xl px-6 py-12">
+      <RestoreBookingVisit query={query} />
       <p className="section-label">{t.eyebrow}</p>
       <h1 className="display mt-5 text-5xl">{t.title}</h1>
       <p className="mt-5 max-w-2xl leading-7 text-[var(--text-secondary)]">

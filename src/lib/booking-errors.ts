@@ -9,6 +9,7 @@ export const BOOKING_ERROR_KEYS = [
   "validation.invalid",
   "validation.table",
   "validation.tableCapacity",
+  "validation.tableUnavailable",
   "error.rateLimited",
   "error.generic",
 ] as const;

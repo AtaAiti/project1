@@ -205,11 +205,11 @@ it("returns failure when the DB transaction fails rather than acknowledging it",
   expect(mocks.drain).not.toHaveBeenCalled();
 });
 
-it("links directly to the localized booking form and contacts WhatsApp", async () => {
+it("starts booking inside Telegram and shows contacts with WhatsApp", async () => {
   await handleBotUpdate(client(), settings, message("/book"));
-  expect(JSON.stringify(rpc.mock.calls[0][1].p_replies)).toContain(
-    "/booking?locale=ru",
-  );
+  expect(rpc.mock.calls[0][1].p_action).toBe("guest_flow");
+  expect(rpc.mock.calls[0][1].p_replies.flow.step).toBe("date");
+  expect(JSON.stringify(rpc.mock.calls[0][1].p_replies.normal)).toContain("g:");
   rpc.mockClear();
   await handleBotUpdate(client(), settings, message("/contacts"));
   expect(JSON.stringify(rpc.mock.calls[0][1].p_replies)).toContain(

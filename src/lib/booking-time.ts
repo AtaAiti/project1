@@ -1,6 +1,26 @@
 export const BOOKING_TIME_ZONE = "Asia/Bishkek";
 export const BOOKING_OPEN_TIME = "10:00";
 export const BOOKING_CLOSE_TIME = "22:00";
+export const BOOKING_DURATION_MINUTES = 120;
+
+export function addVenueDays(date: string, days: number) {
+  const value = new Date(`${date}T12:00:00Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+}
+
+export function bookingSlots(date: string, now = new Date()) {
+  return Array.from({ length: 24 }, (_, i) => {
+    const minutes = 600 + i * 30;
+    return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+  }).filter((time) => !bookingTimeError(date, time, now));
+}
+
+export function bookingEndTime(time: string) {
+  const [hour, minute] = time.split(":").map(Number);
+  const end = Math.min(22 * 60, hour * 60 + minute + BOOKING_DURATION_MINUTES);
+  return `${String(Math.floor(end / 60)).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`;
+}
 
 export function venueToday(now = new Date()) {
   const parts = new Intl.DateTimeFormat("en", {

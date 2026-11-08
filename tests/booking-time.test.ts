@@ -1,10 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { bookingTimeError, venueToday } from "@/lib/booking-time";
+import { addVenueDays, bookingEndTime, bookingSlots, bookingTimeError, venueToday } from "@/lib/booking-time";
 import { validateBookingInput } from "@/lib/booking-validation";
 const now = new Date("2026-10-22T12:00:00Z"); // 18:00 in Bishkek.
 const valid = { name: "Test", phone: "0700123456", date: "2026-10-22", time: "19:00", guests: 2 };
 
 describe("booking times in Bishkek", () => {
+  it("offers future half-hour arrivals and caps visits at closing", () => {
+    expect(bookingSlots("2026-10-22", now)[0]).toBe("18:30");
+    expect(bookingSlots("2026-10-22", now).at(-1)).toBe("21:30");
+    expect(bookingSlots("2026-10-21", now)).toEqual([]);
+    expect(bookingEndTime("18:30")).toBe("20:30");
+    expect(bookingEndTime("21:30")).toBe("22:00");
+    expect(addVenueDays("2026-12-31", 1)).toBe("2027-01-01");
+  });
   it.each(["09:59", "22:00", "22:00:01", "23:59", "00:00"])("rejects %s outside opening hours", (time) => {
     expect(validateBookingInput({ ...valid, date: "2026-10-23", time }, now)).toEqual({ errorKey: "validation.bookingHours" });
   });

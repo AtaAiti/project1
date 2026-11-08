@@ -17,6 +17,7 @@ export async function transitionBooking(
     p_actor: input.actor,
     p_source: input.source,
   });
+  if (error?.code === "23P01") return { outcome: "table_conflict" as const };
   if (error || !data) throw new Error("Booking status unavailable");
   return data as {
     outcome: "changed" | "already" | "conflict" | "not_found" | "past";
